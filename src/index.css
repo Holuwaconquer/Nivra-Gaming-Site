@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+*{
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.vector{
+  box-shadow: 0px 40px 68.2px 100px #210736;
+}
+.vector2{
+  box-shadow: 0px 40px 68.2px 80px #210736;
+}
+
+/* these are the styles for the accordion */
+@keyframes slideDown {
+  from {
+    height: 0;
+    opacity: 0;
+    transition: height 3s ease-in-out;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+    transition: height 3s ease-in-out;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+    transition: height 3s ease-in-out;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+    transition: height 3s ease-in-out;
+  }
+}
+
+.data-\[state\=open\]\:animate-slideDown[data-state="open"] {
+  animation: slideDown 300ms ease-out;
+}
+
+.data-\[state\=closed\]\:animate-slideUp[data-state="closed"] {
+  animation: slideUp 300ms ease-out;
+}

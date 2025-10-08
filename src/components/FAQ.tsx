@@ -1,0 +1,71 @@
+import React from 'react'
+import { Accordion } from "@chakra-ui/react"
+import Polygon from '../assets/Polygon.png'
+import DoublePlus from '../assets/double-plus.png'
+
+const FAQ = () => {
+  const items = [
+    { value: "a", title: "What is Nivra?", text: "Nivra is an online platform that gives you access to different game levels, challenges, and experiences—all in one place. It's where gamers go to play, explore, and level up." },
+    { value: "b", title: "Do i need to sign up to use Nivra?", text: "Some levels are open to everyone, but creating a free account unlocks full access, progress tracking, and exclusive featues." },
+    { value: "c", title: "is Nivra free to use?", text: "Yes!Nivra offers free access to many game levels, Premium features or special content may require a subscription or one-time payment." },
+    { value: "d", title: "can i save my game progress?", text: "Absolutely, Once you're signed in, your progress is automatically saved so you can pick up right where you left off." },
+    { value: "e", title: "How do i report a bug or issue?", text: "You can report bugs or issues directly from your dashboard or contact us through our support page. We'll handle it as fas as possible." },
+  ]
+
+  return (
+    <div className='w-full flex flex-col justify-center gap-4 relative bg-[#210736] px-[8%] py-16'>
+      <div className='w-full flex items-center text-center justify-center gap-4 relative'>
+        <img src={DoublePlus} className='absolute left-[50px] z-5' alt="" />
+        <span><img src={Polygon} className='rotate-180' alt="" /></span>
+        <h1 className='text-[96px] font-semibold text-[#DA07E0]'>FAQ'S</h1>
+        <span><img src={Polygon} alt="" /></span>
+      </div>
+      
+      <Accordion.Root 
+        multiple 
+        defaultValue={["b"]} 
+        className='flex flex-col gap-6 text-white font-semibold cursor-pointer'
+      >
+        {items.map((item, index) => (
+          <Accordion.Item 
+            key={index} 
+            value={item.value} 
+            className='border border-white cursor-pointer rounded-[16px] text-[32px] transition-all duration-300 data-[state=open]:shadow-[0_12px_20px_5px_rgba(255,0,178,0.3)]'
+          >
+            <Accordion.ItemTrigger className='w-full p-[32px] duration-200 data-[state=open]:bg-white data-[state=open]:text-[#210736] data-[state=open]:rounded-t-[16px] data-[state=open]:rounded-b-none'>
+              <div className='flex justify-between items-center w-full border-b-3 border-[#210736] cursor-pointer'>
+                <span className='text-left'>{item.title}</span>
+                <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center transition-all duration-300 data-[state=open]:bg-[#210736] data-[state=open]:rotate-90'>
+                  <svg 
+                    width="12" 
+                    height="8" 
+                    viewBox="0 0 12 8" 
+                    fill="none" 
+                    className='transition-transform duration-300 data-[state=open]:rotate-90'
+                  >
+                    <path 
+                      d="M1 1.5L6 6.5L11 1.5" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      className='data-[state=open]:stroke-white stroke-[#210736] data-[state=open]:rotate-90'
+                    />
+                  </svg>
+                </div>
+              </div>
+            </Accordion.ItemTrigger>
+            
+            <Accordion.ItemContent className='overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp'>
+              <Accordion.ItemBody className='font-normal text-[#210736] bg-white p-[32px] pt-0 rounded-b-[16px]'>
+                {item.text}
+              </Accordion.ItemBody>
+            </Accordion.ItemContent>
+          </Accordion.Item>
+        ))}
+      </Accordion.Root>
+    </div>    
+  )
+}
+
+export default FAQ
