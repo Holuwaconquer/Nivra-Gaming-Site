@@ -2,6 +2,11 @@ import React from 'react'
 import { Accordion } from "@chakra-ui/react"
 import Polygon from '../assets/Polygon.png'
 import DoublePlus from '../assets/double-plus.png'
+import DoubleCircle from '../assets/double-circle.png'
+import DoubleSquare from '../assets/double-square.png'
+import DoubleTriangle from '../assets/double-triangle.png'
+import Mouse from '../assets/mouse.png'
+import Eclipse from '../assets/eclipse.png'
 
 const FAQ = () => {
   const items = [
@@ -13,7 +18,7 @@ const FAQ = () => {
   ]
 
   return (
-    <div className='w-full flex flex-col justify-center gap-4 relative bg-[#210736] px-[8%] py-16'>
+    <div className='w-full flex flex-col justify-center gap-4 relative bg-[#210736] px-[10%] py-16 z-10'>
       <div className='w-full flex items-center text-center justify-center gap-4 relative'>
         <img src={DoublePlus} className='absolute left-[50px] z-5' alt="" />
         <span><img src={Polygon} className='rotate-180' alt="" /></span>
@@ -64,6 +69,12 @@ const FAQ = () => {
           </Accordion.Item>
         ))}
       </Accordion.Root>
+      <img src={DoubleCircle} className='absolute left-0 bottom-0' alt="" />
+      <img src={DoubleSquare} className='absolute right-0 top-[50%]' alt="" />
+      <img src={Mouse} className='absolute left-[30%] bottom-[-30px]' alt="" />
+      <img src={DoubleTriangle} className='absolute right-[30%] bottom-[-80px]' alt="" />
+      <img src={Eclipse} className='absolute right-0 bottom-[40px]' alt="" />
+      <img src={Eclipse} className='absolute left-0 bottom-[-150px]' alt="" />
     </div>    
   )
 }
