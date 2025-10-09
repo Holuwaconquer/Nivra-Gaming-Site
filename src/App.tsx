@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import MainPage from './pages/MainPage'
 import LandingPage from './pages/LandingPage'
 import AboutUs from './pages/AboutUs'
+import Contact from './pages/Contact'
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path='/' element={<MainPage />}>
           <Route index element={<LandingPage />} />
           <Route path='/about-us' element={<AboutUs />} />
+          <Route path='/contact' element={<Contact />} />
         </Route>
         {/* other pages routes that won't have the header and footer will be defined here */}
       </Routes>
