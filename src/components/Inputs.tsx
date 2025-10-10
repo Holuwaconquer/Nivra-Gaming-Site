@@ -15,7 +15,7 @@ const Input = ({label,type, icon, placeholder, required, value, onChange}:InputP
   return (
     <div className='my-6 ' >
       <label htmlFor="firstname" className="font-semibold " >{label}</label>
-              <div className="flex border-b-[2px] px-2 text-lg border-white/50 rounded-full items-center ">
+              <div className="flex border-b-[2px] px-2 text-lg border-white/50 rounded-[8px] items-center ">
                 <span className="text-3xl text-white ">
                   {icon}
                 </span>

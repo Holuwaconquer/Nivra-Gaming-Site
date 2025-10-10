@@ -4,16 +4,9 @@ import { Route, Routes } from 'react-router-dom'
 import MainPage from './pages/MainPage'
 import LandingPage from './pages/LandingPage'
 import AboutUs from './pages/AboutUs'
+import Contact from './pages/Contact';
 
 const App = () => {
-  useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      easing: 'ease-in-out',
-      once: true,
-      mirror: false
-    });
-  }, []);
   return (
     <>
       <Routes>
