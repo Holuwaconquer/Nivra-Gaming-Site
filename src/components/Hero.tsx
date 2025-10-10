@@ -45,7 +45,7 @@ const Hero = () => {
               <img 
                 src={line} 
                 className="absolute -top-0 -left-0" 
-                alt="decoration line" 
+                alt="" 
               />
             </h1>
             
@@ -80,7 +80,7 @@ const Hero = () => {
               <img 
                 src={Mask} 
                 className="w-full h-full object-cover" 
-                alt="VR Gaming Experience" 
+                alt="" 
               />
               {/* Glow effect */}
             </div>
