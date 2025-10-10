@@ -1,10 +1,11 @@
-import React from 'react'
 import NivraLogo from '../assets/nivra-logo.png'
 import { NavLink } from 'react-router-dom'
 
 const Navbar = () => {
   return (
-    <div className='w-full bg-[#210736d6] flex items-center justify-between py-[30px] px-[48px] z-100 sticky top-0 left-0' style={{
+    <div
+      className='w-full bg-[#210736d8] flex items-center justify-between py-[30px] px-[48px] z-100 sticky top-0 left-0' 
+      style={{
         backdropFilter: 'blur(2px)'
       }}>
       <div>

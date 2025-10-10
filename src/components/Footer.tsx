@@ -1,4 +1,3 @@
-import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { FaFacebook, FaYoutube} from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";

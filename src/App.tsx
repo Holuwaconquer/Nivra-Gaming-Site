@@ -1,10 +1,20 @@
-import React from 'react'
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import { Route, Routes } from 'react-router-dom'
 import MainPage from './pages/MainPage'
 import LandingPage from './pages/LandingPage'
 import AboutUs from './pages/AboutUs'
+import { useEffect } from 'react';
 
 const App = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      easing: 'ease-in-out',
+      once: true,
+      mirror: false
+    });
+  }, []);
   return (
     <>
       <Routes>
