@@ -14,7 +14,7 @@ const Footer = () => {
         <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/'>Home</NavLink>
         <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/services'>Services</NavLink>
         <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/about-us'>About Us</NavLink>
-        <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/contact-us'>Contact Us</NavLink>
+        <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/contact'>Contact Us</NavLink>
       </div>
       <div className='flex items-center gap-4 text-[#D932FE] text-[30px]'>
         <FaFacebook className='hover:scale-[1.2] cursor-pointer transition-all' />
