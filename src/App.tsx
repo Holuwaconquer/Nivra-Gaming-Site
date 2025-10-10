@@ -1,9 +1,6 @@
-import AOS from 'aos';
-import 'aos/dist/aos.css';
 import { Route, Routes } from 'react-router-dom'
 import MainPage from './pages/MainPage'
 import LandingPage from './pages/LandingPage'
-import AboutUs from './pages/AboutUs'
 import Contact from './pages/Contact';
 
 const App = () => {
