@@ -1,4 +1,3 @@
-import React from "react";
 import Input from "../components/Inputs";
 import plusImg from "../assets/double-plus.png";
 import {BiEnvelope, BiPhoneCall} from "react-icons/bi";

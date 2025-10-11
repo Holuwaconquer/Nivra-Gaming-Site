@@ -1,4 +1,3 @@
-import React from 'react'
 import { Accordion } from "@chakra-ui/react"
 import Polygon from '../assets/Polygon.png'
 import DoublePlus from '../assets/double-plus.png'
@@ -37,7 +36,7 @@ const FAQ = () => {
             value={item.value} 
             className='border border-white cursor-pointer rounded-[16px] text-[32px] transition-all duration-300 data-[state=open]:shadow-[0_12px_20px_5px_rgba(255,0,178,0.3)]'
           >
-            <Accordion.ItemTrigger className='w-full p-[32px] duration-200 data-[state=open]:bg-white data-[state=open]:text-[#210736] data-[state=open]:rounded-t-[16px] data-[state=open]:rounded-b-none'>
+            <Accordion.ItemTrigger className='w-full p-[32px] duration-200 data-[state=open]:bg-white data-[state=open]:text-[#210736] data-[state=open]:rounded-t-[16px] data-[state=open]:rounded-b-none z-10 relative'>
               <div className='flex justify-between items-center w-full border-b-3 border-[#210736] cursor-pointer'>
                 <span className='text-left'>{item.title}</span>
                 <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center transition-all duration-300 data-[state=open]:bg-[#210736] data-[state=open]:rotate-90'>
@@ -75,6 +74,7 @@ const FAQ = () => {
       <img src={DoubleTriangle} className='absolute right-[30%] bottom-[-80px]' alt="" />
       <img src={Eclipse} className='absolute right-0 bottom-[40px]' alt="" />
       <img src={Eclipse} className='absolute left-0 bottom-[-150px]' alt="" />
+      <img src={Eclipse} className='absolute left-0 top-[40%] opacity-50' alt="" />
     </div>    
   )
 }
