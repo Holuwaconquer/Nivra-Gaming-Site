@@ -1,9 +1,10 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import MainPage from './pages/MainPage'
-import LandingPage from './pages/LandingPage'
-import AboutUs from './pages/AboutUs'
-import Contact from './pages/Contact'
+import { Route, Routes } from "react-router-dom";
+import MainPage from "./pages/MainPage";
+import LandingPage from "./pages/LandingPage";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
+import SignUp from "./pages/auth/SignUp";
+import Login from "./pages/auth/Login";
 
 const App = () => {
   return (
@@ -14,15 +15,17 @@ const App = () => {
         like the header, footer, etc, so i have the index page so i can use to hold other component that are consistent
         in my landing page, so any other pages that are not going to have the header and footer, the route has to be outside of this / routes
          */}
-        <Route path='/' element={<MainPage />}>
+        <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
-          <Route path='/about-us' element={<AboutUs />} />
-          <Route path='/contact' element={<Contact />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact" element={<Contact />} />
         </Route>
+        <Route path="/auth/sign-up" element={<SignUp />} />
+        <Route path="/auth/login" element={<Login />} />
         {/* other pages routes that won't have the header and footer will be defined here */}
       </Routes>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
