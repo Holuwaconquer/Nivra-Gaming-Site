@@ -1,4 +1,3 @@
-import React from "react";
 import NivraLogo from "../assets/nivra-logo.png";
 import { NavLink } from "react-router-dom";
 
