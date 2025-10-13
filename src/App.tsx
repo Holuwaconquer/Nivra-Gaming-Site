@@ -1,14 +1,16 @@
 import { Route, Routes } from "react-router-dom";
 import MainPage from "./pages/MainPage";
 import LandingPage from "./pages/LandingPage";
-import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
+import AboutUs from "./components/AboutUs";
+import ScrollToTop from "./components/ScrollTopTop";
 
 const App = () => {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         {/* the / route is the landing page */}
         {/* the reason i have this index page is because there are some component that will be consistent accross other pages
@@ -17,8 +19,8 @@ const App = () => {
          */}
         <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
-          <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about-us" element={<AboutUs />} />
         </Route>
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/login" element={<Login />} />

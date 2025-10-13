@@ -17,27 +17,28 @@ const FAQ = () => {
   ]
 
   return (
-    <div className='w-full flex flex-col justify-center gap-4 relative bg-[#210736] px-[10%] py-16 z-10'>
+    <div className='w-full flex flex-col justify-center gap-4 relative bg-[#210736] px-[3%] md:px-[10%] py-16 z-10'>
       <div className='w-full flex items-center text-center justify-center gap-4 relative'>
-        <img src={DoublePlus} className='absolute left-[50px] z-5' alt="" />
-        <span><img src={Polygon} className='rotate-180' alt="" /></span>
-        <h1 className='text-[96px] font-semibold text-[#DA07E0]'>FAQ'S</h1>
+        <div className="relative">
+          <img src={DoublePlus} className='absolute top-[-20px] left-[0px] z-5 w-[50px]' alt="" />
+          <span><img src={Polygon} className='rotate-180' alt="" /></span>
+        </div>
+        <h1 className='text-[56px] font-semibold text-[#DA07E0]'>FAQ'S</h1>
         <span><img src={Polygon} alt="" /></span>
       </div>
       
       <Accordion.Root 
-        multiple 
-        defaultValue={["b"]} 
-        className='flex flex-col gap-6 text-white font-semibold cursor-pointer'
+        multiple
+        className='w-full flex flex-col gap-6 text-white font-semibold cursor-pointer'
       >
         {items.map((item, index) => (
           <Accordion.Item 
             key={index} 
             value={item.value} 
-            className='border border-white cursor-pointer rounded-[16px] text-[32px] transition-all duration-300 data-[state=open]:shadow-[0_12px_20px_5px_rgba(255,0,178,0.3)]'
+            className='border z-10 border-white cursor-pointer rounded-[16px] text-[18px] transition-all duration-300 data-[state=open]:shadow-[0_12px_20px_5px_rgba(255,0,178,0.3)]'
           >
-            <Accordion.ItemTrigger className='w-full p-[32px] duration-200 data-[state=open]:bg-white data-[state=open]:text-[#210736] data-[state=open]:rounded-t-[16px] data-[state=open]:rounded-b-none z-10 relative'>
-              <div className='flex justify-between items-center w-full border-b-3 border-[#210736] cursor-pointer'>
+            <Accordion.ItemTrigger className='w-full p-[16px] md:p-[32px] duration-200 data-[state=open]:bg-white data-[state=open]:text-[#210736] data-[state=open]:rounded-t-[16px] data-[state=open]:rounded-b-none z-10 relative'>
+              <div className='flex justify-between items-center w-full data-[state=open]:border-b-3 data-[state=open]:border-[#210736] cursor-pointer'>
                 <span className='text-left'>{item.title}</span>
                 <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center transition-all duration-300 data-[state=open]:bg-[#210736] data-[state=open]:rotate-90'>
                   <svg 
@@ -61,7 +62,7 @@ const FAQ = () => {
             </Accordion.ItemTrigger>
             
             <Accordion.ItemContent className='overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp'>
-              <Accordion.ItemBody className='font-normal text-[#210736] bg-white p-[32px] pt-0 rounded-b-[16px]'>
+              <Accordion.ItemBody className='font-normal text-[#210736] bg-white p-[16px] md:p-[32px] pt-0 rounded-b-[16px]'>
                 {item.text}
               </Accordion.ItemBody>
             </Accordion.ItemContent>

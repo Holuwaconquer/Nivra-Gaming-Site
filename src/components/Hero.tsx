@@ -7,7 +7,7 @@ import line from '../assets/line.png';
 const Hero = () => {
   return (
     <div
-      className="relative w-full py-[4%] px-[48px] overflow-hidden min-h-screen flex items-center">
+      className="relative w-full py-[4%] px-[48px] overflow-hidden lg:min-h-screen flex items-center">
       {/* Lottie Background Animation */}
       <div className="absolute inset-0 z-0 w-full h-full overflow-hidden">
         <div className="w-full h-full scale-150"> {/* Scale container instead */}
@@ -35,10 +35,10 @@ const Hero = () => {
       
       {/* Main Content */}
       <div className="relative z-20 w-full max-w-7xl mx-auto">
-        <div className="w-full grid md:grid-cols-2 items-center gap-8">
+        <div className="w-full grid items-center justify-center md:grid-cols-2 md:justify-between gap-8">
           {/* Left side - Text Content */}
-          <div className="w-full flex flex-col gap-6">
-            <h1 className="text-[4em] md:text-[5em] font-bold leading-[1em] relative">
+          <div className="w-full flex flex-col gap-3 md:gap-6">
+            <h1 className="text-[4em] md:text-[5em] text-center md:text-left font-bold leading-[1em] relative">
               <span className="bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
                 GAMING STREAMER
               </span>
@@ -49,11 +49,11 @@ const Hero = () => {
               />
             </h1>
             
-            <p className="text-[1.5em] md:text-[2em] font-semibold text-white">
+            <p className="text-[1.5em] text-center md:text-left md:text-[2em] font-semibold text-white">
               The Ideal content for <span className="text-[#DA07E0]">Gamers</span>
             </p>
             
-            <p className="text-[16px] font-semibold text-gray-300 leading-relaxed max-w-2xl">
+            <p className="text-[16px] text-center md:text-left font-semibold text-gray-300 leading-relaxed max-w-2xl">
               "Welcome to Nivra – where every level is a new adventure. Dive into your favorite games, 
               unlock challenges, and rise through the ranks. Ready to play?"
             </p>
@@ -67,7 +67,7 @@ const Hero = () => {
               </button>
             </div>
             
-            <div className='flex items-center gap-6 text-[#D932FE] text-[28px] md:text-[30px] pt-4'>
+            <div className='flex justify-center md:justify-start items-center gap-6 text-[#D932FE] text-[28px] md:text-[30px] pt-4'>
               <FaFacebook className='hover:scale-125 cursor-pointer transition-all duration-300 hover:text-[#E845FF]' />
               <BsTwitterX className='hover:scale-125 cursor-pointer transition-all duration-300 hover:text-[#E845FF]'/>
               <FaYoutube className='hover:scale-125 cursor-pointer transition-all duration-300 hover:text-[#E845FF]'/>
