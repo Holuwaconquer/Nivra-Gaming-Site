@@ -19,6 +19,9 @@ import Avatar9 from "../assets/avatars/Avatar9.png";
 import Avatar10 from "../assets/avatars/Avatar10.png";
 import Avatar11 from "../assets/avatars/Avatar11.png";
 import {BiLock, BiPlus} from "react-icons/bi";
+import plusImg from "../assets/double-plus.png";
+import plusTriangle from "../assets/double-triangle.png";
+import mousePic from '../assets/mouse.png'
 
 const images = [
   Profileslide1,
@@ -57,7 +60,7 @@ const Profile = () => {
 
   return (
     // #D932FE
-    <div className="pb-40 bg-[#210736] ">
+    <div className="pb-5 bg-[#210736] ">
       <div className="relative w-full rounded-2xl">
         <div className="">
           {images.map((img, index) => (
@@ -72,7 +75,14 @@ const Profile = () => {
           ))}
         </div>
         {/* MAIN PROFILE SECTION */}
-        <div className="relative pt-40 w-fit mx-auto ">
+        <div className="relative pt-40 w-full ">
+             <div className="absolute right-[30%] bottom-0 z-[99] ">
+        <img className="w-12 h-12 " src={plusTriangle} alt="plus" />
+      </div>
+       <div className="absolute left-[30%] -bottom-10 z-[99] ">
+        <img className="scale-75 " src={mousePic} alt="plus" />
+      </div>
+      <div className="blur-circles w-[200px] absolute -bottom-30 -right-30 h-[200px] rounded-full blur-[30px] bg-[#D932FE]/60 " ></div>
           <div className="relative w-fit mx-auto">
             <img
               className="border-[#D932FE] mx-auto border-16 rounded-full w-60 h-60 object-cover "
@@ -89,7 +99,8 @@ const Profile = () => {
             View Less
           </button>
         </div>
-        <div className="relative w-[80%] mx-auto">
+        <div className="relative w-[70%] mx-auto">
+             <div className="blur-circles w-[150px] absolute -bottom-30 -left-70 h-[150px] rounded-full blur-[40px] bg-[#D932FE]/60 " ></div>
           <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white/20 to-transparent pointer-events-none z-10"></div>
           <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white/20 to-transparent pointer-events-none z-10"></div>
           <div className="avatars-list overflow-x-auto flex flex-row gap-20 scrollbar-hide">
@@ -118,8 +129,9 @@ const Profile = () => {
             ))}
           </div>
         </div>
+        
 
-        <form className="w-[50%] mx-auto my-20 " action="">
+        <form className="w-[50%] mx-auto mt-20 " action="">
             <div className="my-10 flex justify-between " >
                 <label htmlFor="username" className="text-white text-sm mr-10 " >User Name</label>
                 <input type="text" placeholder="User Name" className="bg-[#600097] pl-5 text-[#ca38ff] outline-none border-none h-12 w-[80%] rounded-sm  " id="username" />
@@ -137,8 +149,15 @@ const Profile = () => {
             Save Changes
           </button>
            </div>
-            
+           <div className="absolute left-[80%] bottom-20 z-[99] ">
+        <img className="w-12 h-12 " src={plusTriangle} alt="plus" />
+      </div>
+             <div className="absolute left-[10%] bottom-10 z-[99] ">
+        <img className="w-12 h-12 " src={plusImg} alt="plus" />
+      </div>
         </form>
+
+       
       </div>
     </div>
   );  
