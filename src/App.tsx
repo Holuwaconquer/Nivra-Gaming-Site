@@ -6,6 +6,7 @@ import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import AboutUs from "./components/AboutUs";
 import ScrollToTop from "./components/ScrollTopTop";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/about-us" element={<AboutUs />} />
         </Route>
         <Route path="/auth/sign-up" element={<SignUp />} />
