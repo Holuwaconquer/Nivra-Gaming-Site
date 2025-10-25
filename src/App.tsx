@@ -7,6 +7,7 @@ import Login from "./pages/auth/Login";
 import AboutUs from "./components/AboutUs";
 import ScrollToTop from "./components/ScrollTopTop";
 import Profile from "./pages/Profile";
+import ServicePage from "./pages/ServicePage";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/services" element={<ServicePage />} />
         </Route>
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/login" element={<Login />} />
