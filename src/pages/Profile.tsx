@@ -71,7 +71,7 @@ const Profile = () => {
               key={index}
               src={img}
               alt={`Slide ${index + 1}`}
-              className={`absolute w-full h-[35vh] md:h-[50vh] object-cover transition-opacity duration-1000 ease-in-out ${
+              className={`absolute w-full h-60 sm:h-[30vh] md:h-[50vh] object-cover transition-opacity duration-1000 ease-in-out ${
                 index === current ? "opacity-100" : "opacity-0"
               }`}
             />
