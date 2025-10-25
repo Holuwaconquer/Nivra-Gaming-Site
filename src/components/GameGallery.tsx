@@ -459,7 +459,7 @@ export default function GameGallery() {
         {filteredGames.map((game) => (
           <div
             key={game.id}
-            className="group relative rounded-2xl overflow-hidden border-4 border-purple-500/30 hover:border-pink-500/60 transition-all cursor-pointer w-full"
+            className="group relative rounded-2xl overflow-hidden border-4 border-purple-500/30 sm:hover:border-pink-500/60 transition-all cursor-pointer w-full"
             style={{
               aspectRatio: "1 / 1",
               maxWidth: "100%",
@@ -475,9 +475,9 @@ export default function GameGallery() {
             <div
               className="absolute inset-0 bg-gradient-to-t from-black/95 via-purple-900/90 to-transparent 
                       translate-y-[60%] sm:translate-y-full 
-                      group-hover:translate-y-0 
-                      transition-transform duration-500 ease-out backdrop-blur-md
-                      touch-pan-y"
+                      sm:group-active:translate-y-0 
+                      transition-transform duration-500 ease-out backdrop-blur-md"
+            
             >
               <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5 lg:p-6">
                 <h3 className="text-white font-bold text-lg sm:text-xl lg:text-2xl mb-2 line-clamp-2">
