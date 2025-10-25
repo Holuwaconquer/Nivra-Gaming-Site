@@ -50,6 +50,7 @@ import carSimulator from "../assets/Car Simulator.png";
 export default function GameGallery() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Action");
+  const [activeCardId, setActiveCardId] = useState<number | null>(null);
   const categories = ["Action", "Simulation", "Puzzle", "Adventure", "Racing"];
 
   const games = [
@@ -427,7 +428,7 @@ export default function GameGallery() {
   );
 
   return (
-    <div className="rounded-3xl p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen rounded-3xl p-4 sm:p-6 lg:p-8">
       <div className="relative mb-6 max-w-[886px] mx-auto">
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-300 w-5 h-5" />
         <input
@@ -438,13 +439,12 @@ export default function GameGallery() {
           className="w-full bg-[#411366] text-white placeholder-white rounded-full py-3 pl-12 pr-4 border border-purple-500/30 focus:outline-none focus:border-pink-500/50"
         />
       </div>
-
       <div className="flex justify-center sm:justify-between gap-2 sm:gap-3 mb-8 flex-wrap">
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => setSelectedCategory(category)}
-            className={`px-4 sm:px-6 py-2 text-sm sm:text-base font-medium cursor-pointer transition-all rounded-lg ${
+            className={`px-4 sm:px-6 py-2 text-sm sm:text-base font-medium cursor-pointer transition-all  ${
               selectedCategory === category
                 ? "bg-gradient-to-r from-[#F432FF] to-[#9B32FF] text-white"
                 : "bg-purple-700/50 text-purple-200 hover:bg-purple-700"
@@ -454,17 +454,19 @@ export default function GameGallery() {
           </button>
         ))}
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
         {filteredGames.map((game) => (
           <div
             key={game.id}
-            className="group relative rounded-2xl overflow-hidden border-4 border-purple-500/30 sm:hover:border-pink-500/60 transition-all cursor-pointer w-full"
+            className="group relative rounded-2xl overflow-hidden border-4 border-purple-500/30 hover:border-pink-500/60 transition-all  w-full"
             style={{
               aspectRatio: "1 / 1",
               maxWidth: "100%",
               height: "auto",
             }}
+            onClick={() =>
+              setActiveCardId(activeCardId === game.id ? null : game.id)
+            }
           >
             <img
               src={game.image}
@@ -473,11 +475,14 @@ export default function GameGallery() {
             />
 
             <div
-              className="absolute inset-0 bg-gradient-to-t from-black/95 via-purple-900/90 to-transparent 
-                      translate-y-[60%] sm:translate-y-full 
-                      sm:group-active:translate-y-0 
-                      transition-transform duration-500 ease-out backdrop-blur-md"
-            
+              className={`absolute inset-0 bg-gradient-to-t from-black/95 via-purple-900/90 to-transparent 
+                      transition-transform duration-500 ease-out backdrop-blur-md
+                      ${
+                        activeCardId === game.id
+                          ? "translate-y-0"
+                          : "translate-y-full"
+                      }
+                      group-hover:translate-y-0`}
             >
               <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5 lg:p-6">
                 <h3 className="text-white font-bold text-lg sm:text-xl lg:text-2xl mb-2 line-clamp-2">
@@ -514,7 +519,7 @@ export default function GameGallery() {
                            text-white font-bold py-3 sm:py-3.5 
                            text-base sm:text-lg rounded-lg 
                            transition-all transform hover:scale-105
-                           touch-manipulation"
+                           touch-manipulation cursor-pointer"
                 >
                   Play Now
                 </button>
@@ -523,7 +528,6 @@ export default function GameGallery() {
           </div>
         ))}
       </div>
-
       <div className="flex justify-center mt-8">
         <button
           className="bg-purple-700 hover:bg-purple-600 active:bg-purple-800
