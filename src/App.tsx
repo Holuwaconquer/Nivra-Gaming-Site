@@ -6,7 +6,6 @@ import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import AboutUs from "./components/AboutUs";
 import ScrollToTop from "./components/ScrollTopTop";
-import Sample from "./components/sample"
 import Profile from "./pages/Profile";
 import ServicePage from "./pages/ServicePage";
 
@@ -29,7 +28,6 @@ const App = () => {
         </Route>
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/login" element={<Login />} />
-        <Route path="/sample" element={<Sample />} />
         {/* other pages routes that won't have the header and footer will be defined here */}
       </Routes>
     </>
