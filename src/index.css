@@ -3,9 +3,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 *{
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+}
+body, html{
+  overflow-x: hidden;
 }
 .vector{
   box-shadow: 0px 40px 68.2px 100px #210736;
@@ -173,6 +177,9 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0px 1000px #411366 inset ; 
   -webkit-text-fill-color: white ; 
   transition: background-color 9999s ease-in-out 0s;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /*Fix for Chrome's autofill background issue on input fields.

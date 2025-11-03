@@ -68,13 +68,13 @@ const ShowcaseGaming = () => {
       
       {/* main content of the Nivra gaming site content */}
       <div className='w-full flex flex-col items-center justify-center relative z-10'>
-        <h1 className='text-[2.5em] z-10 lg:text-[6.25em] font-semibold text-[#DA07E0] text-center'>Nivra Gaming Site</h1>
+        <h1 className='text-[28px] md:text-[2.5em] z-10 lg:text-[6.25em] font-semibold text-[#DA07E0] text-center'>Nivra Gaming Site</h1>
         <div className='relative'>
           <img src={GameImage1} alt="" />
           <img src={GameImage2} className='absolute bottom-[-50px] left-0' alt="" />
         </div>
         <p 
-          className='text-center md:w-8/12 text-white md:text-[23.78px] mt-[-40px] z-1'
+          className='text-center md:w-8/12 text-white text-[14px] md:text-[23.78px] mt-[-40px] z-1'
           style={{
             WebkitTextStroke: '2px #FF00B2',
             textStroke: '2px #FF00B2',
@@ -83,8 +83,8 @@ const ShowcaseGaming = () => {
         >
           Whether you're a casual player or a competitive gamer, Nivra is your hub for unlocking new challenges, tracking your progress, and diving deeper into the games you love.
         </p>
-        <img src={DoubleSquare} className='absolute left-0 bottom-[10px]' alt="" />
-        <img src={DoubleTriangle} className='absolute right-0 bottom-[10px]' alt="" />
+        <img src={DoubleSquare} className='absolute left-0 bottom-[10px] opacity-25 md:opacity-100' alt="" />
+        <img src={DoubleTriangle} className='absolute right-0 bottom-[10px] opacity-25 md:opacity-100' alt="" />
       </div>
       {/* end of the main content of the Nivra gaming site content */}
       

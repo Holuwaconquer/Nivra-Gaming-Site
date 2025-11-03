@@ -20,10 +20,10 @@ const FAQ = () => {
     <div className='w-full flex flex-col justify-center gap-4 relative bg-[#210736] px-[3%] md:px-[10%] py-16 z-10'>
       <div className='w-full flex items-center text-center justify-center gap-4 relative'>
         <div className="relative">
-          <img src={DoublePlus} className='absolute top-[-20px] left-[0px] z-5 w-[50px]' alt="" />
+          <img src={DoublePlus} className='absolute top-[-20px] left-[0px] z-5 w-[50px] hidden md:flex' alt="" />
           <span><img src={Polygon} className='rotate-180' alt="" /></span>
         </div>
-        <h1 className='text-[56px] font-semibold text-[#DA07E0]'>FAQ'S</h1>
+        <h1 className='text-[2em] md:text-[56px] font-semibold text-[#DA07E0]'>FAQ'S</h1>
         <span><img src={Polygon} alt="" /></span>
       </div>
       
@@ -72,7 +72,7 @@ const FAQ = () => {
       <img src={DoubleCircle} className='absolute left-0 bottom-0' alt="" />
       <img src={DoubleSquare} className='absolute right-0 top-[50%]' alt="" />
       <img src={Mouse} className='absolute left-[30%] bottom-[-30px]' alt="" />
-      <img src={DoubleTriangle} className='absolute right-[30%] bottom-[-80px]' alt="" />
+      <img src={DoubleTriangle} className='absolute right-[30%] bottom-[-80px] opacity-25 md:opacity-100' alt="" />
       <img src={Eclipse} className='absolute right-0 bottom-[40px]' alt="" />
       <img src={Eclipse} className='absolute left-0 bottom-[-150px]' alt="" />
       <img src={Eclipse} className='absolute left-0 top-[40%] opacity-50' alt="" />

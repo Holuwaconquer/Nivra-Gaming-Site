@@ -6,11 +6,11 @@ const Footer = () => {
   const date = new Date()
   const currentYear = date.getFullYear()
   return (
-    <div className='w-full bg-[#210736] flex flex-col md:flex-row items-center justify-between py-[30px] px-[48px] z-10 relative' style={{boxShadow: '0px -10px 20px 10px #00000033'}}>
-      <div className='text-white text-center md:text-left text-[16px] font-semibold'>
+    <div className='w-full bg-[#210736] flex flex-col-reverse md:flex-row gap-4 md:gap-0 items-center justify-between py-[30px] md:px-[48px] z-10 relative' style={{boxShadow: '0px -10px 20px 10px #00000033'}}>
+      <div className='text-white text-center md:text-left text-[14px] md:text-[16px] font-semibold'>
         <p>Copyright &copy; {currentYear} - {currentYear + 1} Nivra Gaming Site Inc.</p>
       </div>
-      <div className='flex gap-4 items-center'>
+      <div className='flex flex-col md:flex-row gap-4 items-center'>
         <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/'>Home</NavLink>
         <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/services'>Services</NavLink>
         <NavLink className={({ isActive }) => `cursor-pointer text-[16px] transition font-semibold ${isActive ? 'text-[#FF00B2] text-[16px] font-semibold' : 'hover:text-[#FF00B2] text-white' } ` } to='/about-us'>About Us</NavLink>

@@ -79,15 +79,15 @@ const AboutUs = () => {
         {/* for the title and the line inbtw */}
         <div className='w-full flex items-center text-center justify-center gap-4 relative'>
           <div className="relative">
-            <img src={DoublePlus} className='absolute top-[-20px] left-[0px] z-5 w-[50px]' alt="" />
+            <img src={DoublePlus} className='absolute top-[-20px] left-[0px] z-5 w-[50px] hidden md:flex' alt="" />
             <span><img src={Polygon} className='rotate-180' alt="" /></span>
           </div>
-          <h1 className='text-[56px] font-semibold text-[#DA07E0]'>About Us</h1>
+          <h1 className='text-[20px] md:text-[56px] font-semibold text-[#DA07E0] w-full md:w-auto'>About Us</h1>
           <span><img src={Polygon} alt="" /></span>
         </div>
         {/* for the text */}
         <p 
-          className='text-center transition md:w-8/12 text-white md:text-[23.78px] mt-[0px] z-1'
+          className='text-center transition md:w-8/12 text-white text-[14px] md:text-[23.78px] mt-[0px] z-1'
           style={{
             WebkitTextStroke: '2px #FF00B2',
             textStroke: '2px #FF00B2',
