@@ -46,7 +46,7 @@ const Hero = () => {
               </span>
               <img 
                 src={line} 
-                className="absolute -top-0 -left-0" 
+                className="absolute hidden md:flex -top-0 -left-0" 
                 alt="" 
               />
             </h1>
