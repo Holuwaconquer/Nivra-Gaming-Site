@@ -13,7 +13,6 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  // Close menu when clicking on overlay or pressing Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {

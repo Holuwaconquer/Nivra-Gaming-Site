@@ -12,7 +12,7 @@ import Triggers from '../assets/triggers.png'
 import Eclipse from '../assets/eclipse.png'
 
 const FeaturedGames = () => {
-  const [centerIndex, setCenterIndex] = useState(2); // Start with the middle card as center
+  const [centerIndex, setCenterIndex] = useState(2);
   
   const cards = [
     {title: "CALL OF DUTY", averageRating: 4.0, Image: CallOfDuty, reviews: "4/5 - 159K REVIEWS"},
@@ -22,7 +22,6 @@ const FeaturedGames = () => {
     {title: "DEAD TRIGGERS", averageRating: 4.0, Image: Triggers, reviews: "4/5 - 159K REVIEWS"},
   ];
 
-  // Fixed positions for each card slot
   const getCardStyle = (index: number) => {
     const positions = [
       { offset: -360, y: 10, height: '350px', width: '280px', zIndex: 20 }, // Leftmost
@@ -40,24 +39,17 @@ const FeaturedGames = () => {
     setCenterIndex(clickedIndex);
   };
 
-  // Fixed logic for card positioning
   const getCardForPosition = (positionIndex: number) => {
-    // If this position is the center, return the center card
     if (positionIndex === 2) {
       return centerIndex;
     }
     
-    // Create an array of all card indices in order
-    const allIndices = cards.map((_, index) => index);
     
-    // Calculate the offset from center for each position
-    const offsets = [-2, -1, 0, 1, 2]; // positions relative to center
+    const offsets = [-2, -1, 0, 1, 2];
     
-    // Find which card should be at this position
     const targetOffset = offsets[positionIndex];
     let targetIndex = centerIndex + targetOffset;
     
-    // Handle wrapping around the array boundaries
     if (targetIndex < 0) {
       targetIndex = cards.length + targetIndex;
     } else if (targetIndex >= cards.length) {

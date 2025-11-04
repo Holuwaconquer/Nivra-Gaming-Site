@@ -19,7 +19,7 @@ const Hero = () => {
             left: 0,
             width: '100%',
             height: '100%',
-            transform: 'scale(2)', // Much larger scale to ensure full coverage
+            transform: 'scale(2)', 
             transformOrigin: 'center center',
             minWidth: '100%',
             minHeight: '100%',
