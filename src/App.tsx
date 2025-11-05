@@ -8,6 +8,7 @@ import AboutUs from "./components/AboutUs";
 import ScrollToTop from "./components/ScrollTopTop";
 import Profile from "./pages/Profile";
 import ServicePage from "./pages/ServicePage";
+import GamePage from "./pages/GamePage";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/services" element={<ServicePage />} />
+          <Route path="/game" element={<GamePage/>} />
         </Route>
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/login" element={<Login />} />
