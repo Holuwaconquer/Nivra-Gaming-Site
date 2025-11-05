@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
 import slidePic1 from '../assets/Beach Buggy.png'
 import slidePic2 from '../assets/callOfDuty.png'
@@ -6,12 +6,7 @@ import slidePic3 from '../assets/blockBluster.png'
 import slidePic4 from '../assets/surfers.png'
 import slidePic5 from '../assets/triggers.png'
 
-interface Slide {
-    id: number;
-    image: string;
-    title: string;
-    showPlayButton: boolean;
-}
+
 const GamePage = () => {
 
   const [currentSlide, setCurrentSlide] = useState(0);
