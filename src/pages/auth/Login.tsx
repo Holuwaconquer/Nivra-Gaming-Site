@@ -42,7 +42,7 @@ const Login: React.FC = () => {
     return (
       <SuccessMessage
         message="You have successfully Logged into Nivra Gaming Site"
-        onClose={() => navigate("/")}
+        onClose={() => navigate("/game")}
       />
     );
   }
