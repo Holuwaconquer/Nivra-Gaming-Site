@@ -532,7 +532,7 @@ export default function GameGallery() {
         <button
           className="bg-purple-700 hover:bg-purple-600 active:bg-purple-800
                    text-white px-8 sm:px-10 py-3 sm:py-4 
-                   rounded-full font-medium text-base sm:text-lg 
+                   rounded-2xl font-medium text-base sm:text-lg 
                    transition-all flex items-center gap-2
                    touch-manipulation
                    hover:shadow-lg hover:shadow-purple-500/50"
