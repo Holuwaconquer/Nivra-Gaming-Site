@@ -1,3 +1,4 @@
+"use client";
 export interface PodiumPlayer {
   name: string;
   avatar: string;
@@ -91,7 +92,7 @@ export default function Leaderboard({podium, players}: LeaderboardProps) {
                   </td>
 
                   <td className="py-4 text-blue-400 font-medium whitespace-nowrap">
-                    {player.score.toLocaleString()}
+                   {player.score.toLocaleString("en-US")}
                   </td>
 
                   <td className="py-4 text-gray-400 whitespace-nowrap">
