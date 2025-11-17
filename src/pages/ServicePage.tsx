@@ -27,7 +27,6 @@ import shadowFight from "../assets/shadowFight.png";
 import HorizontalSlider from "@/components/HorizontalSlider";
 import UserProfile from "@/components/UserProfile";
 import GameGallery from "@/components/GameGallery";
-import Leaderboard from "@/components/Leaderboard";
 
 import Avatar1 from "../assets/avatars/Avatar1.png";
 import Avatar2 from "../assets/avatars/Avatar2.png";
@@ -176,7 +175,6 @@ const players = [
               <UserProfile />
               <HorizontalSlider direction="left" items={sliderItems1} />
               <HorizontalSlider direction="right" items={sliderItems2} />
-              <Leaderboard players={players} podium={podium} />
               <GameGallery />
             </div>
           </div>
