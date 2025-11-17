@@ -10,10 +10,12 @@ interface HorizontalSliderProps {
 }
 
 const HorizontalSlider: React.FC<HorizontalSliderProps> = ({items, direction}) => {
+
+  const scrollClass = direction === "right" ? "animate-scroll-right" : "animate-scroll";
   return (
     <div className="flex items-center justify-center p-5 mt">
       <div className="w-full max-w-[1178px] h-[245px] overflow-hidden relative rounded-2xl shadow-2xl md:h-[220px] sm:h-[200px]">
-        <div className={`flex w-max ${direction === "right" ? "animate-scroll-right" : "animate-scroll"} hover:pause-animation`}>
+        <div className={`flex w-max ${scrollClass} hover:pause-animation`}>
           <div className="flex gap-4 px-4 md:gap-3 sm:gap-2">
             {items.map((item, index) => (
               <div
