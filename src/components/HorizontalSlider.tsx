@@ -6,13 +6,14 @@ interface SliderItem {
 
 interface HorizontalSliderProps {
   items: SliderItem[];
+  direction?: string;
 }
 
-const HorizontalSlider: React.FC<HorizontalSliderProps> = ({ items }) => {
+const HorizontalSlider: React.FC<HorizontalSliderProps> = ({items, direction}) => {
   return (
     <div className="flex items-center justify-center p-5 mt">
       <div className="w-full max-w-[1178px] h-[245px] overflow-hidden relative rounded-2xl shadow-2xl md:h-[220px] sm:h-[200px]">
-        <div className="flex w-max animate-scroll hover:pause-animation">
+        <div className={`flex w-max ${direction === "right" ? "animate-scroll-right" : "animate-scroll"} hover:pause-animation`}>
           <div className="flex gap-4 px-4 md:gap-3 sm:gap-2">
             {items.map((item, index) => (
               <div
@@ -21,7 +22,7 @@ const HorizontalSlider: React.FC<HorizontalSliderProps> = ({ items }) => {
               >
                 <div
                   className="absolute top-2.5 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full text-base lg:text-[20px] font-extrabold uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#F432FF] to-[#9B32FF] md:text-sm sm:text-xs sm:px-2 sm:py-0.5"
-                  style={{ fontFamily: "Podkova, serif" }}
+                  style={{fontFamily: "Podkova, serif"}}
                 >
                   Top {item.id}
                 </div>
@@ -44,7 +45,7 @@ const HorizontalSlider: React.FC<HorizontalSliderProps> = ({ items }) => {
               >
                 <div
                   className="absolute top-2.5 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full text-base lg:text-[20px] font-extrabold uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#F432FF] to-[#9B32FF] md:text-sm sm:text-xs sm:px-2 sm:py-0.5"
-                  style={{ fontFamily: "Podkova, serif" }}
+                  style={{fontFamily: "Podkova, serif"}}
                 >
                   Top {item.id}
                 </div>
@@ -63,41 +64,76 @@ const HorizontalSlider: React.FC<HorizontalSliderProps> = ({ items }) => {
       </div>
 
       <style>{`
-        @keyframes scroll {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(calc(-50%));
-          }
-        }
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-50%));
+    }
+  }
 
-        .animate-scroll {
-          animation: scroll 20s linear infinite;
-        }
+  .animate-scroll {
+    animation: scroll 20s linear infinite;
+  }
 
-        .hover\\:pause-animation:hover {
-          animation-play-state: paused;
-        }
+  .hover\\:pause-animation:hover {
+    animation-play-state: paused;
+  }
 
-        @media (max-width: 1024px) {
-          .animate-scroll {
-            animation: scroll 15s linear infinite;
-          }
-        }
+  /* Responsive speeds (LEFT scroll) */
+  @media (max-width: 1024px) {
+    .animate-scroll {
+      animation: scroll 15s linear infinite;
+    }
+  }
 
-        @media (max-width: 768px) {
-          .animate-scroll {
-            animation: scroll 20s linear infinite;
-          }
-        }
+  @media (max-width: 768px) {
+    .animate-scroll {
+      animation: scroll 20s linear infinite;
+    }
+  }
 
-        @media (max-width: 480px) {
-          .animate-scroll {
-            animation: scroll 25s linear infinite;
-          }
-        }
-      `}</style>
+  @media (max-width: 480px) {
+    .animate-scroll {
+      animation: scroll 25s linear infinite;
+    }
+  }
+
+
+  @keyframes scroll-right {
+    from {
+      transform: translateX(calc(-50%));
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  .animate-scroll-right {
+    animation: scroll-right 20s linear infinite;
+  }
+
+  /* Responsive speeds (RIGHT scroll) */
+  @media (max-width: 1024px) {
+    .animate-scroll-right {
+      animation: scroll-right 15s linear infinite;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .animate-scroll-right {
+      animation: scroll-right 20s linear infinite;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .animate-scroll-right {
+      animation: scroll-right 25s linear infinite;
+    }
+  }
+
+`}</style>
     </div>
   );
 };

@@ -27,6 +27,13 @@ import shadowFight from "../assets/shadowFight.png";
 import HorizontalSlider from "@/components/HorizontalSlider";
 import UserProfile from "@/components/UserProfile";
 import GameGallery from "@/components/GameGallery";
+import Leaderboard from "@/components/Leaderboard";
+
+import Avatar1 from "../assets/avatars/Avatar1.png";
+import Avatar2 from "../assets/avatars/Avatar2.png";
+import Avatar3 from "../assets/avatars/Avatar3.png";
+import Avatar4 from "../assets/avatars/Avatar4.png";
+import Avatar5 from "../assets/avatars/Avatar5.png";
 
 export default function ServicePage() {
   const sliderItems1 = [
@@ -74,6 +81,51 @@ export default function ServicePage() {
     { top: "40%", right: "15%", size: 400 },
     { top: "60%", left: "50%", size: 280 },
   ];
+
+
+
+  const podium = [
+  {
+    name: "Jolie Joie",
+    avatar: Avatar1,
+    requiredPoints: 2000,
+    prize: 100000
+  },
+  {
+    name: "Brian Ngo",
+    avatar: Avatar2,
+    requiredPoints: 2000,
+    prize: 50000
+  },
+  {
+    name: "David Do",
+    avatar: Avatar3,
+    requiredPoints: 2000,
+    prize: 20000
+  }
+];
+
+const players = [
+  {
+    rank: 4,
+    username: "Henrietta O'Connel",
+    avatar: Avatar4,
+    score: 4358,
+    lastSession: "4 hours ago",
+    active: true,
+    reward: "💎 100"
+  },
+  {
+    rank: 5,
+    username: "Darrel Birs",
+    avatar: Avatar5,
+    score: 2146,
+    lastSession: "11 hours ago",
+    active: false,
+    reward: "💎 100"
+  }
+];
+
 
   return (
     <div
@@ -123,7 +175,8 @@ export default function ServicePage() {
             <div className="space-y-8 mb-8">
               <UserProfile />
               <HorizontalSlider items={sliderItems1} />
-              <HorizontalSlider items={sliderItems2} />
+              <HorizontalSlider direction="right" items={sliderItems2} />
+              <Leaderboard players={players} podium={podium} />
               <GameGallery />
             </div>
           </div>
