@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight} from 'lucide-react';
 import slidePic1 from '../assets/Beach Buggy.png'
 import slidePic2 from '../assets/callOfDuty.png'
 import slidePic3 from '../assets/blockBluster.png'
