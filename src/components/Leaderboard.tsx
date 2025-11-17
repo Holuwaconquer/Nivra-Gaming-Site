@@ -22,7 +22,7 @@ export interface Player {
 }
 
 export interface LeaderboardProps {
-  podium: [PodiumPlayer, PodiumPlayer, PodiumPlayer]; 
+  podium: PodiumPlayer[]; 
   players: Player[];
 }
 
