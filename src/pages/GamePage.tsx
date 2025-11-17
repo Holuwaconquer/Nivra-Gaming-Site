@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight} from 'lucide-react';
 import slidePic1 from '../assets/Beach Buggy.png'
 import slidePic2 from '../assets/callOfDuty.png'
 import slidePic3 from '../assets/blockBluster.png'
@@ -82,16 +82,17 @@ const GamePage = () => {
             {/* Conditional Play Button */}
             {slide.showPlayButton && (
               <div className="absolute bottom-[10%] sm:bottom-[20%] max-sm:scale-75 left-0 right-0 flex items-end justify-center">
-                <button className="group relative px-8 py-3 border-2 border-pink-500 bg-black/40 backdrop-blur-sm hover:bg-pink-500/20 transition-all duration-300">
+                <a href={slide.id === 5 ? "/countdown" : ""}>
+                <button className="group relative px-8 py-3 border-2 border-pink-500 hover:border-purple-800 bg-black/40 backdrop-blur-sm hover:bg-purple-800 transition-all duration-300">
                   <div className="flex items-center gap-2 text-white">
-                    <Play className="w-4 h-4 fill-current" />
                     <span className="text-sm font-semibold tracking-wider uppercase">
-                      Tap to Play
+                      {slide.id === 5? "End Game" : "Tap to Play"}
                     </span>
                   </div>
                   {/* Glow effect */}
                   <div className="absolute inset-0 border-2 border-pink-500 opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300" />
                 </button>
+                </a>
               </div>
             )}
           </div>
@@ -100,7 +101,7 @@ const GamePage = () => {
         {/* Left Arrow */}
         <button
           onClick={prevSlide}
-          className="absolute left-10 top-1/2 max-sm:scale-75 -translate-y-1/2 w-12 h-12 flex items-center justify-center  backdrop-blur-sm hover:bg-white/30 text-white rounded-full transition-all duration-300 border-2 border-purple-500/30 z-20"
+          className="absolute left-10 top-1/2 max-sm:scale-75 -translate-y-1/2 w-12 h-12 flex items-center justify-center  backdrop-blur-sm hover:bg-white/30 text-white rounded-full transition-all duration-300 border-3 border-purple-800 z-20"
           aria-label="Previous slide"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -109,7 +110,7 @@ const GamePage = () => {
         {/* Right Arrow */}
         <button
           onClick={nextSlide}
-          className="absolute right-10 top-1/2 max-sm:scale-75 -translate-y-1/2 w-12 h-12 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 text-white rounded-full transition-all duration-300 border-2 border-purple-500/30 z-20"
+          className="absolute right-10 top-1/2 max-sm:scale-75 -translate-y-1/2 w-12 h-12 flex items-center justify-center backdrop-blur-sm hover:bg-white/30 text-white rounded-full transition-all duration-300 border-3 border-purple-800 z-20"
           aria-label="Next slide"
         >
           <ArrowRight className="w-6 h-6" />
@@ -126,10 +127,10 @@ const GamePage = () => {
             >
               {/* Indicator bar */}
               <div 
-                className={`h-1 rounded-full transition-all duration-300 ${
+                className={`h-2 rounded-full transition-all duration-300 ${
                   currentSlide === index 
                     ? 'sm:w-12 w-8 bg-pink-500' 
-                    : 'sm:w-8 w-6 bg-white/40 group-hover:bg-white/60'
+                    : 'sm:w-8 w-6 border-purple-500 bg-none border-2'
                 }`}
               />
               {currentSlide === index && (
