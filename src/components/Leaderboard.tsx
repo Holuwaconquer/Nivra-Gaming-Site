@@ -33,29 +33,29 @@ export default function Leaderboard({podium, players}: LeaderboardProps) {
     <div className="w-full max-w-6xl mx-auto text-white">
       <p className="text-center text-4xl font-bold py-10 ">LEADERBOARD</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 mt-10">
-        <PodiumCard
-          position="2nd"
-          data={podium[1]}
-          height="h-64"
-          bg="bg-[#1c2333]"
-        />
-
-        <PodiumCard
-          position="1st"
-          data={podium[0]}
-          height="h-72"
-          bg="bg-[#222b3e]"
-          isChampion={true}
-        />
-
-        <PodiumCard
-          position="3rd"
-          data={podium[2]}
-          height="h-64"
-          bg="bg-[#1c2333]"
-        />
-      </div>
+      {podium.length >= 3 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 mt-10">
+          <PodiumCard
+            position="2nd"
+            data={podium[1]}
+            height="h-64"
+            bg="bg-[#1c2333]"
+          />
+          <PodiumCard
+            position="1st"
+            data={podium[0]}
+            height="h-72"
+            bg="bg-[#222b3e]"
+            isChampion
+          />
+          <PodiumCard
+            position="3rd"
+            data={podium[2]}
+            height="h-64"
+            bg="bg-[#1c2333]"
+          />
+        </div>
+      )}
 
       <div className="bg-[#141a24] p-6 rounded-xl shadow-lg">
         <div className="overflow-x-auto">
