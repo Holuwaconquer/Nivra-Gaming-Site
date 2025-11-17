@@ -174,8 +174,8 @@ const players = [
           <div className="lg:mx-16">
             <div className="space-y-8 mb-8">
               <UserProfile />
-              <HorizontalSlider direction="left" items={sliderItems1} />
-              <HorizontalSlider direction="right" items={sliderItems2} />
+              <HorizontalSlider  items={sliderItems1} />
+              <HorizontalSlider items={sliderItems2} />
               <Leaderboard players={players} podium={podium} />
               <GameGallery />
             </div>
