@@ -4,25 +4,6 @@ import shape3 from "../assets/double-circle.png";
 import shape4 from "../assets/double-plus.png";
 import shape5 from "../assets/mouse.png";
 
-import deltaForce from "../assets/deltaForce.png";
-import callOfDuty from "../assets/callOfDuty.png";
-import trigger from "../assets/triggers.png";
-import surfers from "../assets/surfers.png";
-import blockBuster from "../assets/blockBluster.png";
-import eFootball from "../assets/eFootball.png";
-import asphaltCity from "../assets/asphaltCity.png";
-import dreamLeagueSoccer from "../assets/dreamLeagueSoccer.png";
-import demonCity from "../assets/dragonCity.png";
-import sonicDash from "../assets/sonicDash.png";
-import whiteoutSurvival from "../assets/whiteoutSurvival.png";
-import modernCombat from "../assets/modernCombat.png";
-import harryPotter from "../assets/harryPotter.png";
-import evonyKingReturn from "../assets/evonyKingReturn.png";
-import streetRacing3d from "../assets/streetRacing3d.png";
-import trafficRider from "../assets/trafficRider.png";
-import grimLegend from "../assets/grimLegend.png";
-import vector from "../assets/vector.png";
-import shadowFight from "../assets/shadowFight.png";
 
 import HorizontalSlider from "@/components/HorizontalSlider";
 import UserProfile from "@/components/UserProfile";
