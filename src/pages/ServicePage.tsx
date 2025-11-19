@@ -29,39 +29,45 @@ import UserProfile from "@/components/UserProfile";
 import GameGallery from "@/components/GameGallery";
 import Leaderboard from "@/components/Leaderboard";
 
+
 import Avatar1 from "../assets/avatars/Avatar1.png";
 import Avatar2 from "../assets/avatars/Avatar2.png";
 import Avatar3 from "../assets/avatars/Avatar3.png";
 import Avatar4 from "../assets/avatars/Avatar4.png";
 import Avatar5 from "../assets/avatars/Avatar5.png";
+import Avatar6 from "../assets/avatars/Avatar6.png";
+import Avatar7 from "../assets/avatars/Avatar7.png";
+import Avatar8 from "../assets/avatars/Avatar8.png";
+import Avatar9 from "../assets/avatars/Avatar9.png";
+import Avatar10 from "../assets/avatars/Avatar10.png";
+import Avatar11 from "../assets/avatars/Avatar11.png";
 
 export default function ServicePage() {
-  const sliderItems1 = [
-    { id: 1, name: "DELTA FORCE", image: deltaForce },
-    { id: 2, name: "CALL OF DUTY", image: callOfDuty },
-    { id: 3, name: "DEAD TRIGGER", image: trigger },
-    { id: 4, name: "SUBWAY SURFERS", image: surfers },
-    { id: 5, name: "BLOCK BLAST", image: blockBuster },
-    { id: 6, name: "E FOOTBALL", image: eFootball },
-    { id: 7, name: "ASPHALT 8", image: asphaltCity },
-    { id: 8, name: "DREAM LEAGUE", image: dreamLeagueSoccer },
-    { id: 9, name: "DEMON CITY", image: demonCity },
-    { id: 10, name: "SONIC DASH", image: sonicDash },
-  ];
+const sliderItems1 = [
+  { id: 1, name: "ShadowStrike", image: Avatar7 },
+  { id: 2, name: "PhantomReaper", image: Avatar3 },
+  { id: 3, name: "NeonViper", image: Avatar11 },
+  { id: 4, name: "UrbanSprinter", image: Avatar5 },
+  { id: 5, name: "BlockMaster", image: Avatar2 },
+  { id: 6, name: "GoalCrusher", image: Avatar9 },
+  { id: 7, name: "NitroRacer", image: Avatar4 },
+  { id: 8, name: "StrikerPro", image: Avatar8 },
+  { id: 9, name: "DarkSlayer", image: Avatar1 },
+  { id: 10, name: "SpeedDemon", image: Avatar6 },
+];
 
-  const sliderItems2 = [
-    { id: 11, name: "WHITEOUT SURVIVAL", image: whiteoutSurvival },
-    { id: 12, name: "MODERN COMBAT", image: modernCombat },
-    { id: 13, name: "HARRY POTTER", image: harryPotter },
-    { id: 14, name: "EVONY", image: evonyKingReturn },
-    { id: 15, name: "STREET RACING", image: streetRacing3d },
-    { id: 16, name: "TRAFFIC RIDER", image: trafficRider },
-    { id: 17, name: "GRIM LEGENDS", image: grimLegend },
-    { id: 18, name: "SHADOW FIGHT", image: shadowFight },
-    { id: 19, name: "TEMPLE RUN 2", image: demonCity },
-    { id: 20, name: "VECTOR", image: vector },
-  ];
-
+const sliderItems2 = [
+  { id: 11, name: "FrostWarden", image: Avatar10 },
+  { id: 12, name: "WarMachine", image: Avatar3 },
+  { id: 13, name: "MysticWizard", image: Avatar7 },
+  { id: 14, name: "KingSlayer", image: Avatar5 },
+  { id: 15, name: "StreetRacer", image: Avatar11 },
+  { id: 16, name: "RoadWarrior", image: Avatar2 },
+  { id: 17, name: "GhostHunter", image: Avatar8 },
+  { id: 18, name: "ShadowNinja", image: Avatar4 },
+  { id: 19, name: "RuneMaster", image: Avatar9 },
+  { id: 20, name: "VectorPilot", image: Avatar6 },
+];
   const shapes = [
     { top: "10%", left: "15%", size: 60, image: shape1, opacity: 0.6 },
     { top: "15%", right: "50%", size: 60, image: shape2, opacity: 0.5 },
