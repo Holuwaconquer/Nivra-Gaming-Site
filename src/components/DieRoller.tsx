@@ -47,7 +47,8 @@ export const DieRoller: React.FC = () => {
     }
 
     if (value === null) {
-      return <Dice6 {...iconProps} className="text-[#AD15B5] opacity-50" />;
+      return <img src={Die1} className=' scale-75 ' />
+;
     }
 
     switch (value) {
@@ -62,7 +63,7 @@ export const DieRoller: React.FC = () => {
   };
 
   return (
-    <div className="relative group">
+    <div className="relative group max-w-2xl mx-auto my-5 ">
       {/* Glow effect behind the card */}
       <div className="absolute -inset-1 bg-gradient-to-r from-[#AD15B5] to-[#FF00B2] rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
       
