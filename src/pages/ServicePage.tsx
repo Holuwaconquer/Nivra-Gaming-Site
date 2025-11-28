@@ -22,6 +22,7 @@ import Avatar8 from "../assets/avatars/Avatar8.png";
 import Avatar9 from "../assets/avatars/Avatar9.png";
 import Avatar10 from "../assets/avatars/Avatar10.png";
 import Avatar11 from "../assets/avatars/Avatar11.png";
+import { DieRoller } from "@/components/DieRoller";
 
 export default function ServicePage() {
 const sliderItems1 = [
@@ -165,6 +166,7 @@ const players = [
               <HorizontalSlider direction="right" items={sliderItems2} />
               <Leaderboard players={players} podium={podium} />
               <GameGallery />
+              <DieRoller/>
             </div>
           </div>
         </div>
