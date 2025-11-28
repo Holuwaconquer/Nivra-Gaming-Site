@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, Loader2, Sparkles } from 'lucide-react';
+import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, Sparkles } from 'lucide-react';
 import Die1 from '../assets/Die1.png'
 
 export const DieRoller: React.FC = () => {
