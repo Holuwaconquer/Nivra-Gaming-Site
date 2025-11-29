@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import CountdownTimer from "../components/CountdownTimer";
 
@@ -8,30 +8,32 @@ import shape3 from "../assets/double-circle.png";
 import shape4 from "../assets/double-plus.png";
 import shape5 from "../assets/mouse.png";
 
-import asphaltCity from "../assets/streetRacing3d.png";
-import streetRacing3d from "../assets/streetRacing3d.png";
-import eFootball from "../assets/eFootball.png";
-import deltaForce from "../assets/deltaForce.png";
-import sonicDash from "../assets/sonicDash.png";
+import backgroundVideo from "../assets/background-video.mp4";
+import fallbackImage from "../assets/streetRacing3d.png";
 
 const CountdownPage: React.FC = () => {
   const navigate = useNavigate();
-  const [currentBg, setCurrentBg] = useState(0);
-
-  const backgrounds = [
-    asphaltCity,
-    streetRacing3d,
-    eFootball,
-    deltaForce,
-    sonicDash,
-  ];
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % backgrounds.length);
-    }, 9059000);
-    return () => clearInterval(interval);
-  }, [backgrounds.length]);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current && !isMobile) {
+      videoRef.current.play().catch((error) => {
+        console.log("Video autoplay failed:", error);
+      });
+    }
+  }, [isMobile]);
 
   const shapes = [
     { top: "1%", left: "9%", size: 60, image: shape1, opacity: 0.6 },
@@ -41,7 +43,7 @@ const CountdownPage: React.FC = () => {
     { top: "50%", left: "1%", size: 60, image: shape1, opacity: 0.5 },
     { top: "5%", left: "37%", size: 60, image: shape5, opacity: 0.5 },
     { top: "36%", left: "5%", size: 60, image: shape4, opacity: 0.5 },
-    { top: "100%", right: "25%", size: 60, image: shape3, opacity: 0.4 },
+    { bottom: "5%", right: "25%", size: 60, image: shape3, opacity: 0.4 },
   ];
 
   const blurSpots = [
@@ -93,32 +95,93 @@ const CountdownPage: React.FC = () => {
       ))}
 
       <div
-        className="relative z-10 flex flex-col items-center justify-center bg-cover bg-center rounded-3xl shadow-lg p-12"
+        className="relative z-10 flex flex-col items-center justify-center rounded-3xl shadow-lg p-6 sm:p-12 overflow-hidden mx-4"
         style={{
-          backgroundImage: `url(${backgrounds[currentBg]})`,
           width: "95%",
           maxWidth: "1200px",
-          minHeight: "600px",
+          minHeight: isMobile ? "500px" : "600px",
         }}
       >
-        <h2 className="text-3xl sm:text-4xl font-semibold mb-10 drop-shadow-lg">
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: -1,
+            overflow: "hidden",
+            borderRadius: "1.5rem",
+          }}
+        >
+          {!isMobile ? (
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                minWidth: "100%",
+                minHeight: "100%",
+                width: "auto",
+                height: "auto",
+                transform: "translate(-50%, -50%)",
+                objectFit: "cover",
+              }}
+              onEnded={(e) => {
+                e.currentTarget.pause();
+              }}
+            >
+              <source src={backgroundVideo} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundImage: `url(${fallbackImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          )}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: isMobile
+                ? "rgba(0, 0, 0, 0.5)"
+                : "rgba(0, 0, 0, 0.4)",
+            }}
+          />
+        </div>
+
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-6 sm:mb-10 drop-shadow-lg relative z-10 text-center px-4">
           Stay tuned for the next Round!
         </h2>
 
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6 relative z-10">
           <CountdownTimer duration={9059} />
         </div>
 
-        <div className="flex flex-col items-center space-y-3 mt-8">
-          <div className="flex flex-col sm:flex-row items-center gap-3 mt-8">
+        <div className="flex flex-col items-center space-y-3 mt-4 sm:mt-8 relative z-10 w-full px-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <button
-              className="flex items-center justify-center px-8 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg w-full sm:w-auto"
+              className="flex items-center justify-center px-6 sm:px-8 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-base sm:text-lg w-full sm:w-auto"
               style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}
             >
               Get Notified
             </button>
             <button
-              className="flex items-center justify-center px-4 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg"
+              className="flex items-center justify-center px-4 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-base sm:text-lg w-full sm:w-auto"
               style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}
             >
               <svg
@@ -141,7 +204,7 @@ const CountdownPage: React.FC = () => {
 
           <button
             onClick={() => navigate("/services")}
-            className="border border-[#D932FE]  cursor-pointer text-white px-8 py-3 rounded-md font-semibold hover:bg-[#D932FE] hover:text-white transition text-lg"
+            className="border border-[#D932FE] cursor-pointer text-white px-6 sm:px-8 py-3 rounded-md font-semibold hover:bg-[#D932FE] hover:text-white transition text-base sm:text-lg w-full sm:w-auto"
           >
             Back to Service Page
           </button>
