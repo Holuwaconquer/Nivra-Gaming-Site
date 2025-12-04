@@ -1,11 +1,35 @@
-import React, { useState, useCallback } from 'react';
-import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, Sparkles } from 'lucide-react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Dice1, Dice2, Dice3, Dice4, Dice5, Dice6, Sparkles, Timer } from 'lucide-react';
 import Die1 from '../assets/Die1.png'
+
+const REDIRECT_URL = "https://nivragamingsite.vercel.app/services"; // EDIT THIS URL
+const INITIAL_TIME = 240; // Seconds
 
 export const DieRoller: React.FC = () => {
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [statusText, setStatusText] = useState("Ready to roll");
+
+  // Timer State
+  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
+
+  // Timer Logic (Moved outside of rollDice)
+  useEffect(() => {
+    // If timer reaches 0, redirect
+    if (timeLeft <= 0) {
+      window.location.href = REDIRECT_URL;
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [timeLeft]);
+
+  // Format time as MM:SS
+  const formattedTime = `${Math.floor(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}`;
 
   const rollDice = useCallback(async () => {
     if (isRolling) return;
@@ -47,8 +71,7 @@ export const DieRoller: React.FC = () => {
     }
 
     if (value === null) {
-      return <img src={Die1} className=' scale-75 ' />
-;
+      return <img src={Die1} className=' scale-75 ' />;
     }
 
     switch (value) {
@@ -63,12 +86,20 @@ export const DieRoller: React.FC = () => {
   };
 
   return (
-    <div className="relative group max-w-2xl mx-auto my-5 ">
+    <div className="relative group w-full h-screen bg-[#411366] ">
       {/* Glow effect behind the card */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-[#AD15B5] to-[#FF00B2] rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-      
+      {/* <div className="absolute -inset-1 bg-gradient-to-r from-[#AD15B5] to-[#FF00B2] rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div> */}
+
+       <div className="absolute top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 bg-[#2a0e45]/80 backdrop-blur-sm border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.2)] animate-pulse">
+        <Timer className="text-[#FF00B2]" size={20} />
+        <div className="flex flex-col items-end">
+          <span className="text-[10px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-1">Redirecting In</span>
+          <span className="text-white font-mono font-bold text-lg leading-none">{formattedTime}</span>
+        </div>
+      </div>
+
       {/* Main Card */}
-      <div className="relative bg-[#411366] p-8 rounded-xl border border-[#AD15B5]/30 shadow-2xl flex flex-col items-center gap-8">
+      <div className="relative justify-center h-screen max-w-2xl mx-auto bg-[#411366] p-8 shadow-2xl flex flex-col items-center gap-8">
         
         {/* Status Display */}
         <div className="w-full text-center space-y-2 h-16 flex flex-col items-center justify-center">

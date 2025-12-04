@@ -10,6 +10,8 @@ import Profile from "./pages/Profile";
 import ServicePage from "./pages/ServicePage";
 import GamePage from "./pages/GamePage";
 import CountdownPage from "./pages/CountdownPage";
+import { DieRoller } from "./components/DieRoller";
+import { SpinTheBottle } from "./components/SpinBottle";
 
 const App = () => {
   return (
@@ -28,6 +30,8 @@ const App = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/services" element={<ServicePage />} />
           <Route path="/game" element={<GamePage />} />
+          <Route path="/die-roller" element={<DieRoller />} />
+          <Route path="/spin-bottle" element={<SpinTheBottle />} />
           <Route path="/countdown" element={<CountdownPage />} />
         </Route>
         <Route path="/auth/sign-up" element={<SignUp />} />
