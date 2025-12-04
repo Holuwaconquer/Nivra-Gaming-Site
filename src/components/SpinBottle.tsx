@@ -78,7 +78,7 @@ export const SpinTheBottle: React.FC = () => {
     // CSS Transform rotates clockwise. The segments are arranged clockwise starting from 0 (Top).
     // Segment 0: 0-45deg, Segment 1: 45-90deg, etc.
     
-    const currentRotation = rotation % 360; // Normalize current position
+    // const currentRotation = rotation % 360; // Normalize current position
     const randomAngle = Math.floor(Math.random() * 360);
     const fullSpins = 360 * (5 + Math.floor(Math.random() * 3)); // At least 5 spins
     const totalNewRotation = fullSpins + randomAngle;
