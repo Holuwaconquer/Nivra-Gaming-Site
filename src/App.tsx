@@ -12,6 +12,7 @@ import GamePage from "./pages/GamePage";
 import CountdownPage from "./pages/CountdownPage";
 import { DieRoller } from "./components/DieRoller";
 import { SpinTheBottle } from "./components/SpinBottle";
+import Coinflip from "./components/Coinflip";
 
 const App = () => {
   return (
@@ -23,16 +24,17 @@ const App = () => {
         like the header, footer, etc, so i have the index page so i can use to hold other component that are consistent
         in my landing page, so any other pages that are not going to have the header and footer, the route has to be outside of this / routes
          */}
+          <Route path="/game" element={<GamePage />} />
+          <Route path="/die-roller" element={<DieRoller />} />
+          <Route path="/spin-bottle" element={<SpinTheBottle />} />
+          <Route path="/countdown" element={<CountdownPage />} />
+          <Route path="/coinflip" element={<Coinflip/>} />
         <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/services" element={<ServicePage />} />
-          <Route path="/game" element={<GamePage />} />
-          <Route path="/die-roller" element={<DieRoller />} />
-          <Route path="/spin-bottle" element={<SpinTheBottle />} />
-          <Route path="/countdown" element={<CountdownPage />} />
         </Route>
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/login" element={<Login />} />
