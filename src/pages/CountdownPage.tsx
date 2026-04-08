@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import CountdownTimer from "../components/CountdownTimer";
+import { useGameSession } from "../lib/GameSessionContext";
 
 import shape1 from "../assets/double-triangle.png";
 import shape2 from "../assets/double-square.png";
@@ -16,15 +16,11 @@ import sonicDash from "../assets/sonicDash.png";
 
 const CountdownPage: React.FC = () => {
   const navigate = useNavigate();
+  const { state } = useGameSession();
+  const [timeLeft, setTimeLeft] = useState<number>(0);
   const [currentBg, setCurrentBg] = useState(0);
 
-  const backgrounds = [
-    asphaltCity,
-    streetRacing3d,
-    eFootball,
-    deltaForce,
-    sonicDash,
-  ];
+  const backgrounds = [asphaltCity, streetRacing3d, eFootball, deltaForce, sonicDash];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,6 +28,31 @@ const CountdownPage: React.FC = () => {
     }, 9059000);
     return () => clearInterval(interval);
   }, [backgrounds.length]);
+
+  const targetDate = useMemo(() => {
+    const now = new Date();
+    const target = new Date(now);
+    target.setDate(target.getDate() + 1);
+    target.setHours(15, 0, 0, 0);
+    return target;
+  }, []);
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const target = targetDate.getTime();
+      const diff = Math.max(0, Math.floor((target - now) / 1000));
+      setTimeLeft(diff);
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  const hours = Math.floor(timeLeft / 3600);
+  const minutes = Math.floor((timeLeft % 3600) / 60);
+  const seconds = timeLeft % 60;
 
   const shapes = [
     { top: "1%", left: "9%", size: 60, image: shape1, opacity: 0.6 },
@@ -50,99 +71,77 @@ const CountdownPage: React.FC = () => {
     { top: "60%", left: "50%", size: 280 },
   ];
 
+  const boxStyle = {
+    borderRadius: "12px",
+    background: "linear-gradient(0deg, #9B32FF, #F432FF)",
+    opacity: 1,
+    border: "2px solid rgba(255, 255, 255, 0.2)",
+    fontFamily: "Poppins, sans-serif",
+  };
+
   return (
-    <div
-      className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center text-white"
-      style={{ backgroundColor: "#210736" }}
-    >
+    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center text-white" style={{ backgroundColor: "#210736" }}>
       {blurSpots.map((spot, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full blur-3xl"
-          style={{
-            top: spot.top,
-            left: spot.left,
-            right: spot.right,
-            bottom: spot.bottom,
-            width: `${spot.size}px`,
-            height: `${spot.size}px`,
-            backgroundColor: "#D932FE",
-            opacity: 0.3,
-          }}
-        />
+        <div key={i} className="absolute rounded-full blur-3xl" style={{
+          top: spot.top, left: spot.left, right: spot.right, bottom: spot.bottom,
+          width: `${spot.size}px`, height: `${spot.size}px`, backgroundColor: "#D932FE", opacity: 0.3,
+        }} />
       ))}
 
       {shapes.map((shape, i) => (
-        <img
-          key={i}
-          src={shape.image}
-          alt=""
-          className="absolute"
-          style={{
-            top: shape.top,
-            left: shape.left,
-            right: shape.right,
-            bottom: shape.bottom,
-            width: `${shape.size}px`,
-            height: `${shape.size}px`,
-            opacity: shape.opacity,
-            objectFit: "contain",
-            zIndex: 1,
-          }}
-        />
+        <img key={i} src={shape.image} alt="" className="absolute" style={{
+          top: shape.top, left: shape.left, right: shape.right, bottom: shape.bottom,
+          width: `${shape.size}px`, height: `${shape.size}px`, opacity: shape.opacity, objectFit: "contain", zIndex: 1,
+        }} />
       ))}
 
-      <div
-        className="relative z-10 flex flex-col items-center justify-center bg-cover bg-center rounded-3xl shadow-lg p-12"
-        style={{
-          backgroundImage: `url(${backgrounds[currentBg]})`,
-          width: "95%",
-          maxWidth: "1200px",
-          minHeight: "600px",
-        }}
-      >
-        <h2 className="text-3xl sm:text-4xl font-semibold mb-10 drop-shadow-lg">
+      <div className="relative z-10 flex flex-col items-center justify-center bg-cover bg-center rounded-3xl shadow-lg p-12" style={{
+        backgroundImage: `url(${backgrounds[currentBg]})`, width: "95%", maxWidth: "1200px", minHeight: "600px",
+      }}>
+        <h2 className="text-3xl sm:text-4xl font-semibold mb-10 drop-shadow-lg text-center">
           Stay tuned for the next Round!
         </h2>
 
-        <div className="mb-6">
-          <CountdownTimer duration={9059} />
+        <div className="mb-6 flex flex-wrap sm:flex-nowrap justify-center gap-4">
+          {[hours, minutes, seconds].map((value, label) => (
+            <div key={label} style={boxStyle} className="shadow-lg backdrop-blur-sm flex flex-col items-center justify-center w-40 h-48 p-4 sm:w-56 sm:h-48 sm:p-8">
+              <h3 className="text-4xl sm:text-6xl font-bold leading-none">{value.toString().padStart(2, "0")}</h3>
+              <p className="text-xs sm:text-base uppercase mt-2 sm:mt-3 opacity-90">
+                {["Hours", "Minutes", "Seconds"][label]}
+              </p>
+            </div>
+          ))}
         </div>
+
+        {state.totalPoints > 0 && (
+          <div className="bg-purple-900/70 p-6 rounded-2xl border-2 border-pink-500 mb-6 w-full max-w-md">
+            <div className="flex flex-col items-center gap-2">
+              <div className="text-pink-300 text-2xl font-bold">Session Points</div>
+              <div className="text-white text-4xl font-black">{state.totalPoints.toLocaleString()}</div>
+              <div className="text-purple-200 text-sm">Breakdown:</div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                {Object.entries(state.points).map(([game, pts]) => (
+                  <div key={game} className="text-white text-base">{game.replace('-', ' ').toUpperCase()}: {pts}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col items-center space-y-3 mt-8">
           <div className="flex flex-col sm:flex-row items-center gap-3 mt-8">
-            <button
-              className="flex items-center justify-center px-8 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg w-full sm:w-auto"
-              style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}
-            >
+            <button className="flex items-center justify-center px-8 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg w-full sm:w-auto" style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}>
               Get Notified
             </button>
-            <button
-              className="flex items-center justify-center px-4 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg"
-              style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-white"
-              >
+            <button className="flex items-center justify-center px-4 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg" style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                 <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                 <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
               </svg>
             </button>
           </div>
 
-          <button
-            onClick={() => navigate("/services")}
-            className="border border-[#D932FE]  cursor-pointer text-white px-8 py-3 rounded-md font-semibold hover:bg-[#D932FE] hover:text-white transition text-lg"
-          >
+          <button onClick={() => navigate("/services")} className="border border-[#D932FE] cursor-pointer text-white px-8 py-3 rounded-md font-semibold hover:bg-[#D932FE] hover:text-white transition text-lg">
             Back to Service Page
           </button>
         </div>

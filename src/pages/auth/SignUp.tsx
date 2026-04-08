@@ -49,7 +49,7 @@ const SignUp: React.FC = () => {
             </span>
           </>
         }
-        onClose={() => navigate("/die-roller")}
+        onClose={() => navigate("/game")}
       />
     );
   }

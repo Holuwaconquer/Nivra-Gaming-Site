@@ -13,6 +13,7 @@ import CountdownPage from "./pages/CountdownPage";
 import { DieRoller } from "./components/DieRoller";
 import { SpinTheBottle } from "./components/SpinBottle";
 import Coinflip from "./components/Coinflip";
+import TicTacToe from "./components/TicTacToe";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/spin-bottle" element={<SpinTheBottle />} />
           <Route path="/countdown" element={<CountdownPage />} />
           <Route path="/coinflip" element={<Coinflip/>} />
+          <Route path="/tic-tac-toe" element={<TicTacToe/>} />
         <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
           <Route path="/contact" element={<Contact />} />
