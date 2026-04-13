@@ -34,7 +34,8 @@ type GameSessionAction =
   | { type: 'COMPLETE_GAME' }
   | { type: 'NEXT_GAME' }
   | { type: 'TICK' }
-  | { type: 'END_SESSION' };
+  | { type: 'END_SESSION' }
+  | { type: 'RESTORE_STATE'; state: GameSessionState; adjustedTimeLeft: number };
 
 const INITIAL_STATE: GameSessionState = {
   gamesQueue: [],
@@ -129,6 +130,12 @@ function gameSessionReducer(state: GameSessionState, action: GameSessionAction):
         currentGameId: null,
       };
 
+    case 'RESTORE_STATE':
+      return {
+        ...action.state,
+        timeLeft: action.adjustedTimeLeft,
+      };
+
     default:
       return state;
   }
@@ -153,6 +160,45 @@ interface GameSessionProviderProps {
 export function GameSessionProvider({ children }: GameSessionProviderProps) {
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(gameSessionReducer, INITIAL_STATE);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    if (state.sessionActive) {
+      const saveData = {
+        state,
+        lastTickTime: Date.now(),
+      };
+      localStorage.setItem('gameSession', JSON.stringify(saveData));
+    }
+  }, [state]);
+
+  // Load state from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('gameSession');
+    if (savedData) {
+      try {
+        const { state: savedState, lastTickTime } = JSON.parse(savedData);
+        if (savedState.sessionActive && lastTickTime) {
+          // Calculate elapsed time during refresh
+          const elapsedSeconds = Math.floor((Date.now() - lastTickTime) / 1000);
+          const adjustedTimeLeft = Math.max(0, savedState.timeLeft - elapsedSeconds);
+
+          // Restore state with adjusted timer
+          dispatch({ type: 'RESTORE_STATE', state: savedState, adjustedTimeLeft });
+        }
+      } catch (error) {
+        console.error('Failed to restore session:', error);
+        localStorage.removeItem('gameSession');
+      }
+    }
+  }, []);
+
+  // Clear localStorage when session ends
+  useEffect(() => {
+    if (!state.sessionActive) {
+      localStorage.removeItem('gameSession');
+    }
+  }, [state.sessionActive]);
 
   // Timer tick
   useEffect(() => {
