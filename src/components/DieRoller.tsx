@@ -6,31 +6,41 @@ import Die1 from '../assets/Die1.png';
 
 export const DieRoller: React.FC = () => {
   const navigate = useNavigate();
-  const { state, addPoints, completeGame } = useGameSession();
+  const { state, addPoints } = useGameSession();
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [targetNumber, setTargetNumber] = useState<number>(0);
-  const [attemptsLeft, setAttemptsLeft] = useState(5);
-  const [gameOver, setGameOver] = useState(false);
+  const [attemptsLeft, setAttemptsLeft] = useState(3);
   const [hasWon, setHasWon] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   // Initialize game when component mounts or session starts
   useEffect(() => {
     if (state.sessionActive) {
       const newTarget = Math.floor(Math.random() * 6) + 1;
       setTargetNumber(newTarget);
-      setAttemptsLeft(5);
       setResult(null);
-      setGameOver(false);
       setHasWon(false);
+      setAttemptsLeft(3);
+      setIsResetting(false);
     }
   }, [state.sessionActive]);
+
+  // Reset target when attempts run out or on success
+  const resetTarget = useCallback(() => {
+    const newTarget = Math.floor(Math.random() * 6) + 1;
+    setTargetNumber(newTarget);
+    setResult(null);
+    setHasWon(false);
+    setAttemptsLeft(3);
+    setIsResetting(false);
+  }, []);
 
   // Format time from session context
   const formattedTime = `${Math.floor(state.timeLeft / 60).toString().padStart(2, '0')}:${(state.timeLeft % 60).toString().padStart(2, '0')}`;
 
   const rollDice = useCallback(async () => {
-    if (isRolling || attemptsLeft <= 0 || gameOver) return;
+    if (isRolling || attemptsLeft <= 0 || isResetting) return;
 
     setIsRolling(true);
     setResult(null);
@@ -40,35 +50,34 @@ export const DieRoller: React.FC = () => {
 
       const newRoll = Math.floor(Math.random() * 6) + 1;
       setResult(newRoll);
-      setAttemptsLeft(prev => prev - 1);
 
       if (newRoll === targetNumber) {
         setHasWon(true);
-        setGameOver(true);
         addPoints('die-roller', 20);
-        completeGame();
-      } else if (attemptsLeft - 1 === 0) {
-        setGameOver(true);
-        completeGame();
+        // Reset after a short delay on success
+        setIsResetting(true);
+        setTimeout(() => {
+          resetTarget();
+        }, 1500);
+      } else {
+        setAttemptsLeft(prev => prev - 1);
+        // Reset after a short delay if no attempts left
+        if (attemptsLeft - 1 === 0) {
+          setIsResetting(true);
+          setTimeout(() => {
+            resetTarget();
+          }, 1500);
+        }
       }
     } catch (error) {
       console.error("Failed to roll", error);
     } finally {
       setIsRolling(false);
     }
-  }, [isRolling, attemptsLeft, gameOver, targetNumber, addPoints, completeGame]);
-
-  // DEBUG: Log state on render
-  console.log('DieRoller render:', {
-    sessionActive: state.sessionActive,
-    currentGameId: state.currentGameId,
-    gameCompleted: state.gameCompleted,
-    timeLeft: state.timeLeft
-  });
+  }, [isRolling, targetNumber, attemptsLeft, addPoints, resetTarget, isResetting]);
 
   // Check if it's this game's turn (show warning if not)
   if (state.sessionActive && state.currentGameId !== 'die-roller') {
-    console.log('DieRoller: Not my turn! Should be:', state.currentGameId);
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#411366]">
         <div className="text-center p-4">
@@ -107,6 +116,14 @@ export const DieRoller: React.FC = () => {
         </div>
       </div>
 
+      {/* Score Counter */}
+      <div className="fixed top-4 left-4 z-50 flex items-center gap-2 px-3 py-2 bg-[#2a0e45]/90 backdrop-blur-md border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.3)]">
+        <div className="flex flex-col items-start">
+          <span className="text-[8px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-0.5">Total Score</span>
+          <span className="text-white font-mono font-bold text-sm leading-none">{state.totalPoints}</span>
+        </div>
+      </div>
+
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4 pt-20 pb-8">
         <div className="max-w-2xl mx-auto flex flex-col items-center gap-6">
@@ -116,26 +133,7 @@ export const DieRoller: React.FC = () => {
             <div className="text-5xl md:text-7xl font-black text-white tracking-wider drop-shadow-lg">
               {targetNumber}
             </div>
-            <p className="text-[#FF00B2] text-xs uppercase tracking-widest opacity-70 mt-1">Roll to match!</p>
-          </div>
-
-          {/* Attempts Left */}
-          <div className="text-center">
-            <p className="text-white text-xs uppercase tracking-widest mb-2">Attempts Remaining</p>
-            <div className="flex gap-2 justify-center">
-              {[1, 2, 3, 4, 5].map((num) => (
-                <div
-                  key={num}
-                  className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-bold text-base md:text-lg transition-all ${
-                    num <= attemptsLeft
-                      ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white shadow-lg'
-                      : 'bg-purple-900/30 text-gray-500'
-                  }`}
-                >
-                  {num}
-                </div>
-              ))}
-            </div>
+            <p className="text-[#FF00B2] text-xs uppercase tracking-widest opacity-70 mt-1">Attempts Left: {attemptsLeft}/3</p>
           </div>
 
           {/* Die Display */}
@@ -156,54 +154,51 @@ export const DieRoller: React.FC = () => {
           </div>
 
           {/* Result Message */}
-          {gameOver && (
-            <div className={`text-2xl md:text-3xl font-black mb-4 animate-bounce text-center ${hasWon ? 'text-green-400' : 'text-red-400'}`}>
-              {hasWon ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Sparkles size={24} />
-                  YOU WON! +20 POINTS
-                  <Sparkles size={24} />
-                </span>
-              ) : (
-                <span>GAME OVER - No more attempts!</span>
-              )}
+          {result && hasWon && (
+            <div className="text-2xl md:text-3xl font-black mb-4 animate-bounce text-center text-green-400">
+              <span className="flex items-center justify-center gap-2">
+                <Sparkles size={24} />
+                YOU WON! +20 POINTS
+                <Sparkles size={24} />
+              </span>
             </div>
           )}
 
           {/* Result Info */}
           {result && !isRolling && (
-            <p className="text-white/70 text-sm text-center mb-4">
-              You rolled {result}. {result === targetNumber ? 'Correct!' : `Target was ${targetNumber}`}
-            </p>
+            <div className="text-center mb-4">
+              <p className="text-white/70 text-sm">
+                You rolled {result}. {result === targetNumber ? 'Correct!' : `Target was ${targetNumber}`}
+              </p>
+              {attemptsLeft === 0 && !hasWon && (
+                <p className="text-yellow-400 text-sm mt-2 animate-pulse">Getting new target...</p>
+              )}
+              {hasWon && (
+                <p className="text-green-400 text-sm mt-2 animate-pulse">Getting new target...</p>
+              )}
+            </div>
           )}
 
           {/* Roll Button */}
           <button
             onClick={rollDice}
-            disabled={isRolling || attemptsLeft <= 0 || gameOver}
+            disabled={isRolling || attemptsLeft <= 0 || isResetting}
             className={`w-full max-w-md py-3 px-6 rounded-xl font-bold text-lg uppercase tracking-wider transition-all duration-300 transform overflow-hidden
-              ${(isRolling || attemptsLeft <= 0 || gameOver)
+              ${isRolling || attemptsLeft <= 0 || isResetting
                 ? 'bg-[#2a0e45] text-[#AD15B5] cursor-not-allowed border border-[#AD15B5]/30 opacity-60'
                 : 'bg-gradient-to-r from-[#AD15B5] to-[#FF00B2] text-white hover:shadow-[0_0_30px_rgba(255,0,178,0.5)] hover:-translate-y-1 active:translate-y-0'
               }
             `}
           >
-            {(isRolling || attemptsLeft <= 0 || gameOver) ? (
-              <span className="flex items-center justify-center gap-2">
-                {gameOver ? (hasWon ? 'WON!' : 'GAME OVER') : 'NO ATTEMPTS LEFT'}
-              </span>
-            ) : (
-              'ROLL THE DIE'
-            )}
+            {isRolling ? 'ROLLING...' : isResetting ? 'GETTING NEW TARGET...' : 'ROLL THE DIE'}
           </button>
 
           {/* Instructions */}
           <div className="mt-4 text-center text-white/50 text-xs max-w-md">
-            <p>Roll the die to match the target number. You have 5 attempts. Match the target to earn 20 points!</p>
+            <p>Roll the die to match the target number. You have 3 attempts per target. Match to earn 20 points!</p>
           </div>
         </div>
       </div>
-
     </div>
   );
 };

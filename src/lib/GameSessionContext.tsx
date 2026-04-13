@@ -2,14 +2,15 @@ import { createContext, useContext, useReducer, useEffect, useCallback, type Rea
 import { useNavigate } from 'react-router-dom';
 
 // --- Types ---
-export type GameId = 'die-roller' | 'coinflip' | 'spin-bottle' | 'tic-tac-toe';
+export type GameId = 'die-roller' | 'coinflip' | 'spin-bottle' | 'tic-tac-toe' | 'rps';
 
 // Game durations in seconds
 const GAME_DURATIONS: Record<GameId, number> = {
-  'die-roller': 300,    // 5 minutes
-  'coinflip': 300,      // 5 minutes
-  'spin-bottle': 300,   // 5 minutes
-  'tic-tac-toe': 90,    // 1 minute 30 seconds
+  'die-roller': 30,    // 3 minutes
+  'coinflip': 30,      // 3 minutes
+  'spin-bottle': 30,   // 3 minutes
+  'tic-tac-toe': 30,   // 3 minutes
+  'rps': 30,           // 3 minutes
 };
 
 const getGameDuration = (gameId: GameId): number => {
@@ -44,6 +45,7 @@ const INITIAL_STATE: GameSessionState = {
     'coinflip': 0,
     'spin-bottle': 0,
     'tic-tac-toe': 0,
+    'rps': 0,
   },
   totalPoints: 0,
   timeLeft: 300, // 5 minutes default
@@ -111,7 +113,7 @@ function gameSessionReducer(state: GameSessionState, action: GameSessionAction):
           timeLeft: hasNextGame ? getGameDuration(nextGameId!) : 0,
           currentGameIndex: nextIndex,
           currentGameId: nextGameId,
-          gameCompleted: true,
+          gameCompleted: false,
           sessionActive: hasNextGame,
         };
       }
@@ -163,15 +165,19 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     return () => clearInterval(timer);
   }, [state.sessionActive, state.gameCompleted]);
 
-  // Redirect when session ends
+  // Redirect when session ends (only from game routes)
   useEffect(() => {
-    console.log('Session ended effect:', { sessionActive: state.sessionActive, gamesQueueLength: state.gamesQueue.length, pathname: window.location.pathname });
-    if (!state.sessionActive && state.gamesQueue.length > 0) {
+    console.log('Session ended effect:', { sessionActive: state.sessionActive, currentGameId: state.currentGameId, gamesQueueLength: state.gamesQueue.length, pathname: window.location.pathname });
+    // Only redirect if session is not active, we're on a game route, and not already on countdown
+    const gameRoutes = ['/die-roller', '/spin-bottle', '/rps', '/coinflip', '/tic-tac-toe'];
+    const isOnGameRoute = gameRoutes.some(route => window.location.pathname === route);
+    
+    if (!state.sessionActive && isOnGameRoute && window.location.pathname !== '/countdown') {
       // Session ended - go to countdown
       console.log('Navigating to /countdown');
       navigate('/countdown');
     }
-  }, [state.sessionActive, state.gamesQueue.length, navigate]);
+  }, [state.sessionActive, navigate]);
 
   // Redirect when game changes (to proper route)
   useEffect(() => {
@@ -236,10 +242,11 @@ export function useGameSession() {
 
 // --- Game order configuration ---
 export const GAME_ORDER: GameId[] = [
-  'tic-tac-toe',
   'die-roller',
-  'coinflip',
   'spin-bottle',
+  'rps',
+  'coinflip',
+  'tic-tac-toe',
 ];
 
 export const GAME_NAMES: Record<GameId, string> = {
@@ -247,6 +254,7 @@ export const GAME_NAMES: Record<GameId, string> = {
   'coinflip': 'Coin Flip',
   'spin-bottle': 'Spin the Bottle',
   'tic-tac-toe': 'Tic-Tac-Toe',
+  'rps': 'Rock Paper Scissors',
 };
 
 export const GAME_ROUTES: Record<GameId, string> = {
@@ -254,4 +262,5 @@ export const GAME_ROUTES: Record<GameId, string> = {
   'coinflip': '/coinflip',
   'spin-bottle': '/spin-bottle',
   'tic-tac-toe': '/tic-tac-toe',
+  'rps': '/rps',
 };

@@ -1,16 +1,9 @@
-import { useEffect } from 'react';
 import { useGameSession } from '../lib/GameSessionContext';
 import { Play } from 'lucide-react';
 import { GAME_ORDER, GAME_NAMES } from '../lib/GameSessionContext';
 
 const GamePage = () => {
   const { state, startSession } = useGameSession();
-
-  useEffect(() => {
-    if (!state.sessionActive && state.gamesQueue.length === 0) {
-      startSession(GAME_ORDER);
-    }
-  }, [state.sessionActive, state.gamesQueue.length, startSession]);
 
   if (state.sessionActive) {
     return (
@@ -42,7 +35,7 @@ const GamePage = () => {
         <div className="flex flex-col items-center gap-6">
           <h1 className="text-white text-3xl font-bold text-center">Welcome to Nivra Gaming!</h1>
           <p className="text-purple-200 text-center">
-            You will play 4 games in this session. Earn as many points as possible!
+            You will play 5 games in this session. Earn as many points as possible!
           </p>
           <div className="flex flex-col gap-3">
             {GAME_ORDER.map((gameId, index) => (

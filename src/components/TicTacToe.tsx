@@ -8,7 +8,7 @@ type CellValue = 'X' | 'O' | null;
 type GameMode = 'single' | 'two-player';
 
 const TicTacToe: React.FC = () => {
-  const { state, addPoints, completeGame } = useGameSession();
+  const { state, addPoints } = useGameSession();
   const [board, setBoard] = useState<CellValue[]>([null, null, null, null, null, null, null, null, null]);
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X');
   const [gameOver, setGameOver] = useState(false);
@@ -67,14 +67,11 @@ const TicTacToe: React.FC = () => {
             setGameOver(true);
             if (result === 'X') {
               addPoints('tic-tac-toe', 100);
-              completeGame();
             } else if (result === 'O') {
               addPoints('tic-tac-toe', 20);
-              completeGame();
             } else {
-              // Draw - allow replay
+              // Draw
               addPoints('tic-tac-toe', 50);
-              // no completeGame, user can play again
             }
           } else {
             setCurrentPlayer('X');
@@ -83,7 +80,7 @@ const TicTacToe: React.FC = () => {
       }, 500);
       return () => clearTimeout(timeout);
     }
-  }, [currentPlayer, gameMode, gameOver, board, getAIMove, checkWinner, addPoints, completeGame]);
+  }, [currentPlayer, gameMode, gameOver, board, getAIMove, checkWinner, addPoints]);
 
   const handleCellClick = (index: number) => {
     if (board[index] !== null || gameOver || (gameMode === 'single' && currentPlayer === 'O')) return;
@@ -100,22 +97,17 @@ const TicTacToe: React.FC = () => {
       if (gameMode === 'single') {
         if (result === 'X') {
           addPoints('tic-tac-toe', 100);
-          completeGame();
         } else if (result === 'O') {
           addPoints('tic-tac-toe', 20);
-          completeGame();
         } else {
           // Draw
           addPoints('tic-tac-toe', 50);
-          // no completeGame, allow replay
         }
       } else {
         if (result === 'Draw') {
           addPoints('tic-tac-toe', 50);
-          // no completeGame, allow replay
         } else {
           addPoints('tic-tac-toe', 100);
-          completeGame();
         }
       }
     } else {
@@ -176,6 +168,14 @@ const TicTacToe: React.FC = () => {
         </div>
       </div>
 
+      {/* Score Counter */}
+      <div className="absolute top-6 left-6 z-50 flex items-center gap-3 px-4 py-2 bg-[#2a0e45]/90 backdrop-blur-md border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.3)]">
+        <div className="flex flex-col items-start">
+          <span className="text-[10px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-1">Total Score</span>
+          <span className="text-white font-mono font-bold text-lg leading-none">{state.totalPoints}</span>
+        </div>
+      </div>
+
       <div className="flex flex-col items-center gap-8 max-w-md w-full">
         <div className="flex flex-col items-center gap-2">
           <h1 className="text-white text-3xl font-bold uppercase tracking-widest drop-shadow-lg">Tic-Tac-Toe</h1>
@@ -224,17 +224,12 @@ const TicTacToe: React.FC = () => {
             }`}>
               {winner === 'Draw' ? "IT'S A DRAW!" : `${winner} WINS!`}
             </p>
-            {winner === 'Draw' && state.timeLeft > 0 && (
-              <button
-                onClick={resetBoard}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
-              >
-                Play Again
-              </button>
-            )}
-            {winner !== 'Draw' && (
-              <p className="text-white/70 text-sm">Great move! Moving to next game...</p>
-            )}
+            <button
+              onClick={resetBoard}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
+            >
+              Play Again
+            </button>
           </div>
         )}
       </div>

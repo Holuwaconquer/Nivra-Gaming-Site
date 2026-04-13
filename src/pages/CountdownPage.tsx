@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGameSession } from "../lib/GameSessionContext";
 
@@ -8,32 +8,45 @@ import shape3 from "../assets/double-circle.png";
 import shape4 from "../assets/double-plus.png";
 import shape5 from "../assets/mouse.png";
 
-import asphaltCity from "../assets/streetRacing3d.png";
-import streetRacing3d from "../assets/streetRacing3d.png";
-import eFootball from "../assets/eFootball.png";
-import deltaForce from "../assets/deltaForce.png";
-import sonicDash from "../assets/sonicDash.png";
+import backgroundVideo from "../assets/background-video.mp4";
+import fallbackImage from "../assets/streetRacing3d.png";
 
 const CountdownPage: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useGameSession();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [currentBg, setCurrentBg] = useState(0);
-
-  const backgrounds = [asphaltCity, streetRacing3d, eFootball, deltaForce, sonicDash];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBg((prev) => (prev + 1) % backgrounds.length);
-    }, 9059000);
-    return () => clearInterval(interval);
-  }, [backgrounds.length]);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current && !isMobile) {
+      videoRef.current.play().catch((error) => {
+        console.log("Video autoplay failed:", error);
+      });
+    }
+  }, [isMobile]);
 
   const targetDate = useMemo(() => {
     const now = new Date();
     const target = new Date(now);
-    target.setDate(target.getDate() + 1);
     target.setHours(15, 0, 0, 0);
+
+    // If today's 3pm has already passed, target tomorrow's 3pm
+    if (now >= target) {
+      target.setDate(target.getDate() + 1);
+    }
+
     return target;
   }, []);
 
@@ -62,7 +75,7 @@ const CountdownPage: React.FC = () => {
     { top: "50%", left: "1%", size: 60, image: shape1, opacity: 0.5 },
     { top: "5%", left: "37%", size: 60, image: shape5, opacity: 0.5 },
     { top: "36%", left: "5%", size: 60, image: shape4, opacity: 0.5 },
-    { top: "100%", right: "25%", size: 60, image: shape3, opacity: 0.4 },
+    { bottom: "5%", right: "25%", size: 60, image: shape3, opacity: 0.4 },
   ];
 
   const blurSpots = [
@@ -80,32 +93,138 @@ const CountdownPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center text-white" style={{ backgroundColor: "#210736" }}>
+    <div
+      className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center text-white"
+      style={{ backgroundColor: "#210736" }}
+    >
       {blurSpots.map((spot, i) => (
-        <div key={i} className="absolute rounded-full blur-3xl" style={{
-          top: spot.top, left: spot.left, right: spot.right, bottom: spot.bottom,
-          width: `${spot.size}px`, height: `${spot.size}px`, backgroundColor: "#D932FE", opacity: 0.3,
-        }} />
+        <div
+          key={i}
+          className="absolute rounded-full blur-3xl"
+          style={{
+            top: spot.top,
+            left: spot.left,
+            right: (spot as any).right,
+            bottom: (spot as any).bottom,
+            width: `${spot.size}px`,
+            height: `${spot.size}px`,
+            backgroundColor: "#D932FE",
+            opacity: 0.3,
+          }}
+        />
       ))}
 
       {shapes.map((shape, i) => (
-        <img key={i} src={shape.image} alt="" className="absolute" style={{
-          top: shape.top, left: shape.left, right: shape.right, bottom: shape.bottom,
-          width: `${shape.size}px`, height: `${shape.size}px`, opacity: shape.opacity, objectFit: "contain", zIndex: 1,
-        }} />
+        <img
+          key={i}
+          src={shape.image}
+          alt=""
+          className="absolute"
+          style={{
+            top: (shape as any).top,
+            left: (shape as any).left,
+            right: (shape as any).right,
+            bottom: (shape as any).bottom,
+            width: `${shape.size}px`,
+            height: `${shape.size}px`,
+            opacity: shape.opacity,
+            objectFit: "contain",
+            zIndex: 1,
+          }}
+        />
       ))}
 
-      <div className="relative z-10 flex flex-col items-center justify-center bg-cover bg-center rounded-3xl shadow-lg p-12" style={{
-        backgroundImage: `url(${backgrounds[currentBg]})`, width: "95%", maxWidth: "1200px", minHeight: "600px",
-      }}>
-        <h2 className="text-3xl sm:text-4xl font-semibold mb-10 drop-shadow-lg text-center">
+      <div
+        className="relative z-10 flex flex-col items-center justify-center rounded-3xl shadow-lg p-6 sm:p-12 overflow-hidden mx-4"
+        style={{
+          width: "95%",
+          maxWidth: "1200px",
+          minHeight: isMobile ? "500px" : "600px",
+        }}
+      >
+        {/* Background: video on desktop, image on mobile */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: -1,
+            overflow: "hidden",
+            borderRadius: "1.5rem",
+          }}
+        >
+          {!isMobile ? (
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                minWidth: "100%",
+                minHeight: "100%",
+                width: "auto",
+                height: "auto",
+                transform: "translate(-50%, -50%)",
+                objectFit: "cover",
+              }}
+              onEnded={(e) => {
+                e.currentTarget.pause();
+              }}
+            >
+              <source src={backgroundVideo} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundImage: `url(${fallbackImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          )}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: isMobile ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.4)",
+            }}
+          />
+        </div>
+
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 sm:mb-6 drop-shadow-lg relative z-10 text-center px-4">
           Stay tuned for the next Round!
         </h2>
 
-        <div className="mb-6 flex flex-wrap sm:flex-nowrap justify-center gap-4">
+        {/* Total Points Display */}
+        <div className="mb-6 sm:mb-10 relative z-10 text-center px-4">
+          <div className="inline-block bg-white/10 backdrop-blur-sm px-8 py-4 rounded-2xl border border-white/20">
+            <p className="text-sm uppercase tracking-widest text-white/70 mb-2">Your Total Score</p>
+            <p className="text-4xl sm:text-5xl font-bold text-white">{state.totalPoints}</p>
+          </div>
+        </div>
+
+        <div className="mb-4 sm:mb-6 relative z-10 flex flex-wrap sm:flex-nowrap justify-center gap-4">
           {[hours, minutes, seconds].map((value, label) => (
-            <div key={label} style={boxStyle} className="shadow-lg backdrop-blur-sm flex flex-col items-center justify-center w-40 h-48 p-4 sm:w-56 sm:h-48 sm:p-8">
-              <h3 className="text-4xl sm:text-6xl font-bold leading-none">{value.toString().padStart(2, "0")}</h3>
+            <div
+              key={label}
+              style={boxStyle}
+              className="shadow-lg backdrop-blur-sm flex flex-col items-center justify-center w-40 h-48 p-4 sm:w-56 sm:h-48 sm:p-8"
+            >
+              <h3 className="text-4xl sm:text-6xl font-bold leading-none">
+                {value.toString().padStart(2, "0")}
+              </h3>
               <p className="text-xs sm:text-base uppercase mt-2 sm:mt-3 opacity-90">
                 {["Hours", "Minutes", "Seconds"][label]}
               </p>
@@ -113,35 +232,40 @@ const CountdownPage: React.FC = () => {
           ))}
         </div>
 
-        {state.totalPoints > 0 && (
-          <div className="bg-purple-900/70 p-6 rounded-2xl border-2 border-pink-500 mb-6 w-full max-w-md">
-            <div className="flex flex-col items-center gap-2">
-              <div className="text-pink-300 text-2xl font-bold">Session Points</div>
-              <div className="text-white text-4xl font-black">{state.totalPoints.toLocaleString()}</div>
-              <div className="text-purple-200 text-sm">Breakdown:</div>
-              <div className="flex flex-wrap gap-4 justify-center">
-                {Object.entries(state.points).map(([game, pts]) => (
-                  <div key={game} className="text-white text-base">{game.replace('-', ' ').toUpperCase()}: {pts}</div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col items-center space-y-3 mt-8">
-          <div className="flex flex-col sm:flex-row items-center gap-3 mt-8">
-            <button className="flex items-center justify-center px-8 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg w-full sm:w-auto" style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}>
+        <div className="flex flex-col items-center space-y-3 mt-4 sm:mt-8 relative z-10 w-full px-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <button
+              className="flex items-center justify-center px-6 sm:px-8 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-base sm:text-lg w-full sm:w-auto"
+              style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}
+            >
               Get Notified
             </button>
-            <button className="flex items-center justify-center px-4 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-lg" style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+            <button
+              className="flex items-center justify-center px-4 py-3 cursor-pointer rounded-md font-semibold hover:opacity-90 transition text-base sm:text-lg w-full sm:w-auto"
+              style={{ background: "linear-gradient(90deg, #9B32FF, #F432FF)" }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-white"
+              >
                 <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                 <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
               </svg>
             </button>
           </div>
 
-          <button onClick={() => navigate("/services")} className="border border-[#D932FE] cursor-pointer text-white px-8 py-3 rounded-md font-semibold hover:bg-[#D932FE] hover:text-white transition text-lg">
+          <button
+            onClick={() => navigate("/services")}
+            className="border border-[#D932FE] cursor-pointer text-white px-6 sm:px-8 py-3 rounded-md font-semibold hover:bg-[#D932FE] hover:text-white transition text-base sm:text-lg w-full sm:w-auto"
+          >
             Back to Service Page
           </button>
         </div>

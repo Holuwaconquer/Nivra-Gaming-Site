@@ -13,14 +13,13 @@ export interface HistoryItem {
 
 // --- Main Coinflip Component ---
 const Coinflip: React.FC = () => {
-  const { state, addPoints, completeGame } = useGameSession();
+  const { state, addPoints } = useGameSession();
   const [flipKey, setFlipKey] = useState(0);
 
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [result, setResult] = useState<Side | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isFlipping, setIsFlipping] = useState(false);
-  const [gameEnded, setGameEnded] = useState(false);
 
   // Format time from session context
   const formattedTime = `${Math.floor(state.timeLeft / 60).toString().padStart(2, '0')}:${(state.timeLeft % 60).toString().padStart(2, '0')}`;
@@ -40,11 +39,12 @@ const Coinflip: React.FC = () => {
       setGameState('RESULT');
       setIsFlipping(false);
       setHistory(prev => [{ timestamp: Date.now(), result: newResult }, ...prev]);
-      // Award points for this flip
-      addPoints('coinflip', 10);
-      // Mark game as completed and move to next game
-      completeGame();
-      setGameEnded(true);
+      // Award points: Angel = 100, Demon = 30
+      if (newResult === 'ANGEL') {
+        addPoints('coinflip', 100);
+      } else {
+        addPoints('coinflip', 30);
+      }
     }, 2000);
   }, [isFlipping, addPoints]);
 
@@ -68,11 +68,13 @@ const Coinflip: React.FC = () => {
           <span className="text-[9px] uppercase font-black text-[#ff00bf] tracking-[0.2em] leading-none mb-1">Time Left</span>
           <span className="sm:text-2xl font-mono font-black text-white leading-tight">{formattedTime}</span>
         </div>
-        <div className="w-10 h-10 rounded-full border-2 border-[#ff00bf]/30 flex items-center justify-center relative bg-[#ff00bf]/5">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#ff00bf]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div className="absolute inset-0 rounded-full border-2 border-[#ff00bf] animate-ping opacity-10"></div>
+      </div>
+
+      {/* Score Counter */}
+      <div className="absolute max-sm:top-3 max-sm:left-3 top-8 left-8 flex items-center max-sm:scale-[0.8] gap-4 bg-[#1e003d]/80 backdrop-blur-xl px-5 py-3 rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] z-50">
+        <div className="flex flex-col items-start">
+          <span className="text-[9px] uppercase font-black text-[#ff00bf] tracking-[0.2em] leading-none mb-1">Total Score</span>
+          <span className="sm:text-2xl font-mono font-black text-white leading-tight">{state.totalPoints}</span>
         </div>
       </div>
 
@@ -100,9 +102,9 @@ const Coinflip: React.FC = () => {
         <div className="w-full max-w-md bg-[#1e003d]/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-8 shadow-2xl">
           <button
             onClick={flipCoin}
-            disabled={isFlipping || gameEnded}
+            disabled={isFlipping}
             className={`w-full py-6 max-sm:py-3 rounded-2xl font-black text-xl tracking-[0.15em] transition-all duration-300 shadow-[0_15px_35px_rgba(255,0,191,0.3)]
-              ${isFlipping || gameEnded
+              ${isFlipping
                 ? 'bg-[#4a008c] text-white/30 cursor-not-allowed scale-95 shadow-none'
                 : 'bg-[#ff00bf] text-white hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(255,0,191,0.5)] active:scale-95'
               }`}

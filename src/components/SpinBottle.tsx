@@ -24,18 +24,18 @@ const BOTTLE_OPTIONS = [
 ];
 
 const BOARD_SEGMENTS = [
-  { label: "JACKPOT",   color: "#FF00B2", textColor: "white", points: 1000 },
-  { label: "TRY AGAIN", color: "#2a0e45", textColor: "#AD15B5", points: 0 },
-  { label: "2X POINTS", color: "#AD15B5", textColor: "white", points: 200 },
+  { label: "LUCKY",     color: "#FF00B2", textColor: "white", points: 150 },
+  { label: "MISSED",    color: "#2a0e45", textColor: "#AD15B5", points: 0 },
+  { label: "BRAVE",     color: "#AD15B5", textColor: "white", points: 100 },
   { label: "MYSTERY",   color: "#411366", textColor: "#FF00B2", points: null }, // Random
-  { label: "BONUS",     color: "#FF00B2", textColor: "white", points: 300 },
-  { label: "LOSE TURN", color: "#2a0e45", textColor: "#AD15B5", points: 0 },
-  { label: "500 PTS",   color: "#AD15B5", textColor: "white", points: 500 },
-  { label: "FREE SPIN", color: "#411366", textColor: "#FF00B2", points: 100 },
+  { label: "WINNER",    color: "#FF00B2", textColor: "white", points: 200 },
+  { label: "UNLUCKY",   color: "#2a0e45", textColor: "#AD15B5", points: 0 },
+  { label: "LEGENDARY", color: "#AD15B5", textColor: "white", points: 500 },
+  { label: "BONUS",     color: "#411366", textColor: "#FF00B2", points: 75 },
 ];
 
 export const SpinTheBottle: React.FC = () => {
-  const { state, addPoints, completeGame } = useGameSession();
+  const { state, addPoints } = useGameSession();
 
   // State
   const [rotation, setRotation] = useState(0);
@@ -45,14 +45,13 @@ export const SpinTheBottle: React.FC = () => {
   const [isDockOpen, setIsDockOpen] = useState(true);
   const [spinResult, setSpinResult] = useState<string | null>(null);
   const [lastPoints, setLastPoints] = useState<number | null>(null);
-  const [gameEnded, setGameEnded] = useState(false);
 
   // Timer Display from context
   const formattedTime = `${Math.floor(state.timeLeft / 60).toString().padStart(2, '0')}:${(state.timeLeft % 60).toString().padStart(2, '0')}`;
 
   // Spin Logic
   const handleSpin = useCallback(() => {
-    if (isSpinning || gameEnded) return;
+    if (isSpinning) return;
 
     setIsSpinning(true);
     setSpinResult(null);
@@ -86,11 +85,8 @@ export const SpinTheBottle: React.FC = () => {
       setLastPoints(points);
       setStatusText(`YOU GOT ${segment.label}!`);
       addPoints('spin-bottle', points);
-      // Mark game as completed and move to next game
-      completeGame();
-      setGameEnded(true);
     }, 3000);
-  }, [isSpinning, rotation, addPoints, completeGame, gameEnded]);
+  }, [isSpinning, rotation, addPoints]);
 
   const activeBottle = BOTTLE_OPTIONS.find(b => b.id === selectedBottleId) || BOTTLE_OPTIONS[0];
 
@@ -111,6 +107,14 @@ export const SpinTheBottle: React.FC = () => {
         <div className="flex flex-col items-end">
           <span className="text-[10px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-1">Time Left</span>
           <span className="text-white font-mono font-bold text-lg leading-none">{formattedTime}</span>
+        </div>
+      </div>
+
+      {/* Score Counter */}
+      <div className="absolute top-6 left-6 z-50 flex items-center gap-3 px-4 py-2 bg-[#2a0e45]/90 backdrop-blur-md border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.3)]">
+        <div className="flex flex-col items-start">
+          <span className="text-[10px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-1">Total Score</span>
+          <span className="text-white font-mono font-bold text-lg leading-none">{state.totalPoints}</span>
         </div>
       </div>
 
@@ -190,8 +194,8 @@ export const SpinTheBottle: React.FC = () => {
       >
         <div className="max-w-4xl mx-auto flex flex-col items-center">
           <button
-            onClick={() => { if (!isSpinning && !gameEnded) setIsDockOpen(!isDockOpen); }}
-            className={`w-full flex items-center justify-center gap-2 py-3 ${isSpinning || gameEnded ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-white/5'} transition-colors`}
+            onClick={() => { if (!isSpinning) setIsDockOpen(!isDockOpen); }}
+            className={`w-full flex items-center justify-center gap-2 py-3 ${isSpinning ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-white/5'} transition-colors`}
           >
             <span className="text-[#FF00B2] text-xs font-bold uppercase tracking-[0.2em]">
               {isDockOpen ? 'Hide Bottle Options' : 'Select Your Bottle'}
@@ -207,7 +211,7 @@ export const SpinTheBottle: React.FC = () => {
                 <button
                   key={bottle.id}
                   onClick={() => {
-                    if (!isSpinning && !gameEnded) {
+                    if (!isSpinning) {
                       setSelectedBottleId(bottle.id);
                       setRotation(0);
                       setStatusText("Ready to Spin");
@@ -215,14 +219,13 @@ export const SpinTheBottle: React.FC = () => {
                       setLastPoints(null);
                     }
                   }}
-                  disabled={isSpinning || isSelected || gameEnded}
+                  disabled={isSpinning || isSelected}
                   className={`group relative flex-shrink-0 w-16 h-24 md:w-20 md:h-28 rounded-xl flex items-center justify-center transition-all duration-300 overflow-hidden
                     ${isSelected
                       ? 'bg-gradient-to-t from-[#FF00B2]/30 to-transparent border-2 border-[#FF00B2] scale-105 shadow-[0_0_20px_rgba(255,0,178,0.3)]'
                       : 'bg-[#2a0e45] border border-[#AD15B5]/20 hover:border-[#AD15B5] opacity-60 hover:opacity-100 hover:-translate-y-1'
                     }
-                    ${(isSpinning || gameEnded) ? 'cursor-not-allowed opacity-30 grayscale' : 'cursor-pointer'}
-                  `}
+                    ${isSpinning ? 'cursor-not-allowed opacity-30 grayscale' : 'cursor-pointer'}`}
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 

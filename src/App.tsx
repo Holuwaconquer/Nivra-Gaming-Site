@@ -14,6 +14,7 @@ import { DieRoller } from "./components/DieRoller";
 import { SpinTheBottle } from "./components/SpinBottle";
 import Coinflip from "./components/Coinflip";
 import TicTacToe from "./components/TicTacToe";
+import RockPaperScissors from "./components/RockPaperScissors";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/countdown" element={<CountdownPage />} />
           <Route path="/coinflip" element={<Coinflip/>} />
           <Route path="/tic-tac-toe" element={<TicTacToe/>} />
+        <Route path="/rps" element={<RockPaperScissors />} />
         <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
           <Route path="/contact" element={<Contact />} />
