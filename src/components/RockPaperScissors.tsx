@@ -3,9 +3,9 @@ import { Timer, Trophy, Trash2, Swords, Zap } from "lucide-react";
 import RockImg from "../assets/rock.webp";
 import PaperImg from "../assets/paper.webp";
 import ScissorImg from "../assets/scissors.webp";
+import { useGameSession } from "../lib/GameSessionContext";
 
-const REDIRECT_URL = "https://nivragamingsite.vercel.app/services";
-const INITIAL_TIME = 240;
+// Removed local timer logic - now using session context
 
 type Choice = "rock" | "paper" | "scissors" | null;
 type GamePhase = "idle" | "countdown" | "reveal" | "result";
@@ -67,39 +67,57 @@ const RESULT_CONFIG = {
   },
 };
 
-function loadScores(): ScoreBoard {
-  try {
-    const raw = localStorage.getItem("rps_scores");
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { wins: 0, losses: 0, draws: 0 };
-}
-function saveScores(s: ScoreBoard) {
-  localStorage.setItem("rps_scores", JSON.stringify(s));
-}
-
 export const RockPaperScissors: React.FC = () => {
+  const { state, addPoints } = useGameSession();
   const [phase, setPhase] = useState<GamePhase>("idle");
   const [playerChoice, setPlayerChoice] = useState<Choice>(null);
   const [opponentChoice, setOpponentChoice] = useState<Choice>(null);
   const [countdown, setCountdown] = useState(3);
   const [result, setResult] = useState<GameResult>(null);
-  const [scores, setScores] = useState<ScoreBoard>(loadScores);
-  const [timeLeft, setTimeLeft] = useState(INITIAL_TIME);
+  const [scores, setScores] = useState<ScoreBoard>({ wins: 0, losses: 0, draws: 0 });
 
-  /* Redirect timer */
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      window.location.href = REDIRECT_URL;
-      return;
-    }
-    const id = setInterval(() => setTimeLeft((p) => p - 1), 1000);
-    return () => clearInterval(id);
-  }, [timeLeft]);
+  const clearScores = () => {
+    setScores({ wins: 0, losses: 0, draws: 0 });
+  };
 
-  const formattedTime = `${Math.floor(timeLeft / 60)
+  if (!state.sessionActive) {
+    return (
+      <div className="min-h-screen w-full bg-[#2d005e] flex flex-col items-center justify-center relative overflow-hidden text-center px-6">
+        <h2 className="text-4xl font-black text-white mb-4 uppercase tracking-tighter">Session Ended</h2>
+        <p className="text-white/70 mb-6">Redirecting to countdown...</p>
+        
+        {/* Final Score Display */}
+        <div className="rounded-xl bg-[#0b011c]/60 border border-purple-900/35 p-6 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4 text-purple-400">
+            <Trophy size={16} />
+            <span className="text-sm tracking-[2.5px] uppercase font-bold">Your Final Score</span>
+          </div>
+          <div className="flex gap-4 justify-center">
+            <div className="text-center">
+              <div className="bebas text-4xl text-emerald-400 leading-none">{scores.wins}</div>
+              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">Wins</div>
+            </div>
+            <div className="text-center">
+              <div className="bebas text-4xl text-rose-400 leading-none">{scores.losses}</div>
+              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">Losses</div>
+            </div>
+            <div className="text-center">
+              <div className="bebas text-4xl text-yellow-400 leading-none">{scores.draws}</div>
+              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">Draws</div>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-purple-900/30">
+            <div className="text-purple-300 text-sm">Total Points: <span className="text-white font-bold">{state.points.rps}</span></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Format time from session context
+  const formattedTime = `${Math.floor(state.timeLeft / 60)
     .toString()
-    .padStart(2, "0")}:${(timeLeft % 60).toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${(state.timeLeft % 60).toString().padStart(2, "0")}`;
 
   /* Pick */
   const handlePick = useCallback(
@@ -134,18 +152,26 @@ export const RockPaperScissors: React.FC = () => {
       const r = getResult(playerChoice, opponentChoice);
       setResult(r);
       setPhase("result");
-      setScores((prev) => {
-        const next = {
-          wins: prev.wins + (r === "win" ? 1 : 0),
-          losses: prev.losses + (r === "lose" ? 1 : 0),
-          draws: prev.draws + (r === "draw" ? 1 : 0),
-        };
-        saveScores(next);
-        return next;
-      });
+
+      // Update scoreboard
+      if (r === "win") {
+        setScores(prev => ({ ...prev, wins: prev.wins + 1 }));
+      } else if (r === "lose") {
+        setScores(prev => ({ ...prev, losses: prev.losses + 1 }));
+      } else if (r === "draw") {
+        setScores(prev => ({ ...prev, draws: prev.draws + 1 }));
+      }
+
+      // Award points based on result
+      let points = 0;
+      if (r === "win") points = 10;
+      else if (r === "lose") points = 5; // Participation points
+      else if (r === "draw") points = 7;
+
+      addPoints('rps', points);
     }, 900);
     return () => clearTimeout(id);
-  }, [phase, opponentChoice, playerChoice]);
+  }, [phase, opponentChoice, playerChoice, addPoints]);
 
   const reset = () => {
     setPhase("idle");
@@ -153,12 +179,6 @@ export const RockPaperScissors: React.FC = () => {
     setOpponentChoice(null);
     setResult(null);
     setCountdown(3);
-  };
-
-  const clearScores = () => {
-    const fresh = { wins: 0, losses: 0, draws: 0 };
-    setScores(fresh);
-    saveScores(fresh);
   };
 
   const isRevealed = phase === "reveal" || phase === "result";
@@ -213,15 +233,19 @@ export const RockPaperScissors: React.FC = () => {
         style={{ background: "rgba(33,7,54,1)" }}
       >
         {/* Timer Badge */}
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a0638]/90 backdrop-blur-sm border border-fuchsia-700/40 animate-pulse">
-          <Timer size={15} className="text-fuchsia-500" />
-          <div className="flex flex-col items-end leading-none">
-            <span className="text-[8px] uppercase tracking-widest font-bold text-purple-500 mb-0.5">
-              Redirecting In
-            </span>
-            <span className="font-mono font-bold text-white text-base">
-              {formattedTime}
-            </span>
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 px-3 py-2 bg-[#2a0e45]/90 backdrop-blur-md border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.3)]">
+          <Timer className="text-[#FF00B2]" size={16} />
+          <div className="flex flex-col items-end">
+            <span className="text-[8px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-0.5">Time Left</span>
+            <span className="text-white font-mono font-bold text-sm leading-none">{formattedTime}</span>
+          </div>
+        </div>
+
+        {/* Score Counter */}
+        <div className="fixed top-4 left-4 z-50 flex items-center gap-2 px-3 py-2 bg-[#2a0e45]/90 backdrop-blur-md border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.3)]">
+          <div className="flex flex-col items-start">
+            <span className="text-[8px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-0.5">Total Score</span>
+            <span className="text-white font-mono font-bold text-sm leading-none">{state.totalPoints}</span>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import CountdownTimer from "../components/CountdownTimer";
+import { useGameSession } from "../lib/GameSessionContext";
 
 import shape1 from "../assets/double-triangle.png";
 import shape2 from "../assets/double-square.png";
@@ -13,8 +13,10 @@ import fallbackImage from "../assets/streetRacing3d.png";
 
 const CountdownPage: React.FC = () => {
   const navigate = useNavigate();
+  const { state } = useGameSession();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -35,6 +37,36 @@ const CountdownPage: React.FC = () => {
     }
   }, [isMobile]);
 
+  const targetDate = useMemo(() => {
+    const now = new Date();
+    const target = new Date(now);
+    target.setHours(15, 0, 0, 0);
+
+    // If today's 3pm has already passed, target tomorrow's 3pm
+    if (now >= target) {
+      target.setDate(target.getDate() + 1);
+    }
+
+    return target;
+  }, []);
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const target = targetDate.getTime();
+      const diff = Math.max(0, Math.floor((target - now) / 1000));
+      setTimeLeft(diff);
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  const hours = Math.floor(timeLeft / 3600);
+  const minutes = Math.floor((timeLeft % 3600) / 60);
+  const seconds = timeLeft % 60;
+
   const shapes = [
     { top: "1%", left: "9%", size: 60, image: shape1, opacity: 0.6 },
     { top: "15%", right: "8%", size: 60, image: shape2, opacity: 0.5 },
@@ -52,6 +84,14 @@ const CountdownPage: React.FC = () => {
     { top: "60%", left: "50%", size: 280 },
   ];
 
+  const boxStyle = {
+    borderRadius: "12px",
+    background: "linear-gradient(0deg, #9B32FF, #F432FF)",
+    opacity: 1,
+    border: "2px solid rgba(255, 255, 255, 0.2)",
+    fontFamily: "Poppins, sans-serif",
+  };
+
   return (
     <div
       className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center text-white"
@@ -64,8 +104,8 @@ const CountdownPage: React.FC = () => {
           style={{
             top: spot.top,
             left: spot.left,
-            right: spot.right,
-            bottom: spot.bottom,
+            right: (spot as any).right,
+            bottom: (spot as any).bottom,
             width: `${spot.size}px`,
             height: `${spot.size}px`,
             backgroundColor: "#D932FE",
@@ -81,10 +121,10 @@ const CountdownPage: React.FC = () => {
           alt=""
           className="absolute"
           style={{
-            top: shape.top,
-            left: shape.left,
-            right: shape.right,
-            bottom: shape.bottom,
+            top: (shape as any).top,
+            left: (shape as any).left,
+            right: (shape as any).right,
+            bottom: (shape as any).bottom,
             width: `${shape.size}px`,
             height: `${shape.size}px`,
             opacity: shape.opacity,
@@ -102,6 +142,7 @@ const CountdownPage: React.FC = () => {
           minHeight: isMobile ? "500px" : "600px",
         }}
       >
+        {/* Background: video on desktop, image on mobile */}
         <div
           style={{
             position: "absolute",
@@ -157,19 +198,38 @@ const CountdownPage: React.FC = () => {
               left: 0,
               width: "100%",
               height: "100%",
-              backgroundColor: isMobile
-                ? "rgba(0, 0, 0, 0.5)"
-                : "rgba(0, 0, 0, 0.4)",
+              backgroundColor: isMobile ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.4)",
             }}
           />
         </div>
 
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-6 sm:mb-10 drop-shadow-lg relative z-10 text-center px-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 sm:mb-6 drop-shadow-lg relative z-10 text-center px-4">
           Stay tuned for the next Round!
         </h2>
 
-        <div className="mb-4 sm:mb-6 relative z-10">
-          <CountdownTimer duration={9059} />
+        {/* Total Points Display */}
+        <div className="mb-6 sm:mb-10 relative z-10 text-center px-4">
+          <div className="inline-block bg-white/10 backdrop-blur-sm px-8 py-4 rounded-2xl border border-white/20">
+            <p className="text-sm uppercase tracking-widest text-white/70 mb-2">Your Total Score</p>
+            <p className="text-4xl sm:text-5xl font-bold text-white">{state.totalPoints}</p>
+          </div>
+        </div>
+
+        <div className="mb-4 sm:mb-6 relative z-10 flex flex-wrap sm:flex-nowrap justify-center gap-4">
+          {[hours, minutes, seconds].map((value, label) => (
+            <div
+              key={label}
+              style={boxStyle}
+              className="shadow-lg backdrop-blur-sm flex flex-col items-center justify-center w-40 h-48 p-4 sm:w-56 sm:h-48 sm:p-8"
+            >
+              <h3 className="text-4xl sm:text-6xl font-bold leading-none">
+                {value.toString().padStart(2, "0")}
+              </h3>
+              <p className="text-xs sm:text-base uppercase mt-2 sm:mt-3 opacity-90">
+                {["Hours", "Minutes", "Seconds"][label]}
+              </p>
+            </div>
+          ))}
         </div>
 
         <div className="flex flex-col items-center space-y-3 mt-4 sm:mt-8 relative z-10 w-full px-4">
