@@ -159,6 +159,8 @@ const CountdownPage: React.FC = () => {
             <video
               ref={videoRef}
               muted
+              autoPlay
+              loop
               playsInline
               style={{
                 position: "absolute",
@@ -170,9 +172,6 @@ const CountdownPage: React.FC = () => {
                 height: "auto",
                 transform: "translate(-50%, -50%)",
                 objectFit: "cover",
-              }}
-              onEnded={(e) => {
-                e.currentTarget.pause();
               }}
             >
               <source src={backgroundVideo} type="video/mp4" />
