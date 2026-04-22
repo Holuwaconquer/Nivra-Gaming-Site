@@ -1,32 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import NivraLogo from "../assets/nivra-logo.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+
+const NAV_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "Services", to: "/services" },
+  { label: "About Us", to: "/about-us" },
+  { label: "Contact Us", to: "/contact" },
+];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const location = useLocation();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
+  // Close menu on route change
+  useEffect(() => {
     setIsMenuOpen(false);
-  };
+  }, [location.pathname]);
 
+  // Handle escape key + outside click + body scroll lock
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        closeMenu();
-      }
+      if (e.key === "Escape") setIsMenuOpen(false);
     };
 
     const handleClickOutside = (e: MouseEvent) => {
-      const mobileMenu = document.getElementById("mobile-menu");
-      const hamburgerButton = document.querySelector('[aria-label="Toggle menu"]');
-      
-      if (mobileMenu && !mobileMenu.contains(e.target as Node) && 
-          hamburgerButton && !hamburgerButton.contains(e.target as Node)) {
-        closeMenu();
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
+      ) {
+        setIsMenuOpen(false);
       }
     };
 
@@ -35,196 +42,161 @@ const Navbar = () => {
       document.addEventListener("mousedown", handleClickOutside);
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [isMenuOpen]);
 
-  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `cursor-pointer text-[16px] transition font-semibold ${
-      isActive
-        ? "text-[#FF00B2] text-[16px] font-semibold"
-        : "hover:text-[#FF00B2] text-white"
+  const desktopLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `text-[15px] font-semibold transition-colors duration-200 ${
+      isActive ? "text-[#FF00B2]" : "text-white hover:text-[#FF00B2]"
     }`;
 
-  const playNowClass = ({ isActive }: { isActive: boolean }) =>
-    `cursor-pointer text-[16px] transition font-semibold ${
+  const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `block text-base font-semibold py-3 px-4 rounded-lg transition-all duration-200 ${
       isActive
-        ? "text-[16px] font-semibold bg-[#0982FE] py-[12px] px-[32px]"
-        : "hover:bg-[#0982FE] border border-[#FF00B2] py-[12px] px-[32px] text-white"
+        ? "text-[#FF00B2] bg-white/10"
+        : "text-white hover:text-[#FF00B2] hover:bg-white/10"
     }`;
 
   return (
-    <div
-      className="w-full bg-[#210736d6] flex items-center justify-between py-[15px] md:py-[30px] px-[24px] md:px-[48px] z-50 sticky top-0 left-0"
-      style={{
-        backdropFilter: "blur(2px)",
-      }}
-    >
-      {/* Logo */}
-      <div>
-        <img src={NivraLogo} alt="nivra-logo" className="w-32 md:w-auto" />
-      </div>
-
-      {/* Desktop Menu */}
-      <div className="hidden md:flex gap-4 items-center">
-        <NavLink className={navLinkClass} to="/">
-          Home
-        </NavLink>
-        <NavLink className={navLinkClass} to="/services">
-          Services
-        </NavLink>
-        <NavLink className={navLinkClass} to="/about-us">
-          About Us
-        </NavLink>
-        <NavLink className={navLinkClass} to="/contact">
-          Contact Us
-        </NavLink>
-        <NavLink className={playNowClass} to="auth/sign-up">
-          Play Now
-        </NavLink>
-      </div>
-
-      {/* Hamburger Button for Mobile */}
-      <div className="md:hidden flex items-center">
-        <button
-          onClick={toggleMenu}
-          className="text-white focus:outline-none"
-          aria-label="Toggle menu"
-        >
-          <div className="w-6 h-6 flex flex-col justify-between">
-            <span
-              className={`w-full h-0.5 bg-white transform transition duration-300 ${
-                isMenuOpen ? "rotate-45 translate-y-2.5" : ""
-              }`}
-            ></span>
-            <span
-              className={`w-full h-0.5 bg-white transition duration-300 ${
-                isMenuOpen ? "opacity-0" : "opacity-100"
-              }`}
-            ></span>
-            <span
-              className={`w-full h-0.5 bg-white transform transition duration-300 ${
-                isMenuOpen ? "-rotate-45 -translate-y-2.5" : ""
-              }`}
-            ></span>
-          </div>
-        </button>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-70 z-40 md:hidden"
-          onClick={closeMenu}
-        />
-      )}
-
-      {/* Mobile Menu Slide-in */}
-      <div
-        id="mobile-menu"
-        className={`fixed top-0 right-0 h-screen w-64 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+    <>
+      <nav
+        className="w-full sticky top-0 left-0 z-50 flex items-center justify-between py-4 md:py-[26px] px-6 md:px-12"
         style={{
-          backgroundColor: "#4C1D95",
+          backgroundColor: "#210736d6",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(255,0,178,0.12)",
         }}
       >
-        {/* Close Button */}
-        <div className="flex justify-end p-4 border-b border-[#FF00B2] bg-[#4C1D95]">
+        {/* Logo */}
+        <NavLink to="/" className="shrink-0">
+          <img src={NivraLogo} alt="Nivra" className="h-8 md:h-10 w-auto" />
+        </NavLink>
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-8">
+          {NAV_LINKS.map(({ label, to }) => (
+            <NavLink key={to} className={desktopLinkClass} to={to}>
+              {label}
+            </NavLink>
+          ))}
+
+          <NavLink
+            to="/auth/sign-up"
+            className={({ isActive }) =>
+              `text-[15px] font-semibold py-3 px-7 border transition-all duration-200 ${
+                isActive
+                  ? "bg-[#0982FE] border-[#0982FE] text-white"
+                  : "border-[#FF00B2] text-white hover:bg-[#0982FE] hover:border-[#0982FE]"
+              }`
+            }
+          >
+            Play Now
+          </NavLink>
+        </div>
+
+        {/* Hamburger Button */}
+        <button
+          ref={buttonRef}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+          className="md:hidden flex flex-col justify-center items-center w-9 h-9 gap-[5px] focus:outline-none"
+          aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
+        >
+          <span
+            className="block w-6 h-[2px] bg-white origin-center transition-all duration-300"
+            style={{
+              transform: isMenuOpen ? "translateY(7px) rotate(45deg)" : "none",
+            }}
+          />
+          <span
+            className="block w-6 h-[2px] bg-white transition-all duration-300"
+            style={{ opacity: isMenuOpen ? 0 : 1, transform: isMenuOpen ? "scaleX(0)" : "scaleX(1)" }}
+          />
+          <span
+            className="block w-6 h-[2px] bg-white origin-center transition-all duration-300"
+            style={{
+              transform: isMenuOpen ? "translateY(-7px) rotate(-45deg)" : "none",
+            }}
+          />
+        </button>
+      </nav>
+
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-40 md:hidden transition-opacity duration-300"
+        style={{
+          backgroundColor: "rgba(0,0,0,0.65)",
+          opacity: isMenuOpen ? 1 : 0,
+          pointerEvents: isMenuOpen ? "auto" : "none",
+        }}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Mobile Slide-in Panel */}
+      <div
+        ref={menuRef}
+        className="fixed top-0 right-0 h-screen w-72 z-50 md:hidden flex flex-col"
+        style={{
+          backgroundColor: "#2D0A4E",
+          borderLeft: "1px solid rgba(255,0,178,0.2)",
+          transform: isMenuOpen ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
+        aria-hidden={!isMenuOpen}
+      >
+        {/* Panel Header */}
+        <div
+          className="flex items-center justify-between px-5 py-4"
+          style={{ borderBottom: "1px solid rgba(255,0,178,0.15)" }}
+        >
+          <img src={NivraLogo} alt="Nivra" className="h-7 w-auto" />
           <button
-            onClick={closeMenu}
-            className="text-white text-3xl hover:text-[#FF00B2] transition focus:outline-none w-8 h-8 flex items-center justify-center"
+            onClick={() => setIsMenuOpen(false)}
+            className="text-white hover:text-[#FF00B2] transition-colors w-8 h-8 flex items-center justify-center text-2xl leading-none focus:outline-none"
             aria-label="Close menu"
           >
             ×
           </button>
         </div>
 
-        {/* Mobile Menu Content - Simple flex column */}
-        <div className="flex flex-col h-[calc(100vh-73px)] bg-[#4C1D95]">
-          {/* Menu Items - Scrollable area */}
-          <div className="flex-1 overflow-y-auto p-6">
-            <nav className="space-y-4">
-              <NavLink
-                className={({ isActive }) =>
-                  `text-lg py-3 px-4 w-full text-left rounded transition font-semibold block ${
-                    isActive
-                      ? "text-[#FF00B2] bg-purple-800"
-                      : "text-white hover:bg-purple-700 hover:text-[#FF00B2]"
-                  }`
-                }
-                to="/"
-                onClick={closeMenu}
-              >
-                Home
-              </NavLink>
-              <NavLink
-                className={({ isActive }) =>
-                  `text-lg py-3 px-4 w-full text-left rounded transition font-semibold block ${
-                    isActive
-                      ? "text-[#FF00B2] bg-purple-800"
-                      : "text-white hover:bg-purple-700 hover:text-[#FF00B2]"
-                  }`
-                }
-                to="/services"
-                onClick={closeMenu}
-              >
-                Services
-              </NavLink>
-              <NavLink
-                className={({ isActive }) =>
-                  `text-lg py-3 px-4 w-full text-left rounded transition font-semibold block ${
-                    isActive
-                      ? "text-[#FF00B2] bg-purple-800"
-                      : "text-white hover:bg-purple-700 hover:text-[#FF00B2]"
-                  }`
-                }
-                to="/about-us"
-                onClick={closeMenu}
-              >
-                About Us
-              </NavLink>
-              <NavLink
-                className={({ isActive }) =>
-                  `text-lg py-3 px-4 w-full text-left rounded transition font-semibold block ${
-                    isActive
-                      ? "text-[#FF00B2] bg-purple-800"
-                      : "text-white hover:bg-purple-700 hover:text-[#FF00B2]"
-                  }`
-                }
-                to="/contact"
-                onClick={closeMenu}
-              >
-                Contact Us
-              </NavLink>
-            </nav>
-          </div>
-
-          {/* Play Now Button - Fixed at bottom */}
-          <div className="p-6 border-t border-[#FF00B2] bg-[#4C1D95] mt-auto">
-            <NavLink
-              className={({ isActive }) =>
-                `block text-center text-lg w-full py-3 px-4 rounded transition font-semibold ${
-                  isActive
-                    ? "bg-[#0982FE] text-white"
-                    : "border border-[#FF00B2] text-white hover:bg-[#0982FE] hover:border-[#0982FE]"
-                }`
-              }
-              to="auth/sign-up"
-              onClick={closeMenu}
-            >
-              Play Now
+        {/* Nav Items */}
+        <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
+          {NAV_LINKS.map(({ label, to }) => (
+            <NavLink key={to} className={mobileLinkClass} to={to}>
+              {label}
             </NavLink>
-          </div>
+          ))}
+        </nav>
+
+        {/* Play Now CTA */}
+        <div
+          className="px-5 py-5"
+          style={{ borderTop: "1px solid rgba(255,0,178,0.15)" }}
+        >
+          <NavLink
+            to="/auth/sign-up"
+            className={({ isActive }) =>
+              `block text-center text-base font-semibold py-3 px-4 w-full transition-all duration-200 ${
+                isActive
+                  ? "bg-[#0982FE] text-white"
+                  : "border border-[#FF00B2] text-white hover:bg-[#0982FE] hover:border-[#0982FE]"
+              }`
+            }
+          >
+            Play Now
+          </NavLink>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

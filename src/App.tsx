@@ -16,23 +16,42 @@ import Coinflip from "./components/Coinflip";
 import TicTacToe from "./components/TicTacToe";
 import RockPaperScissors from "./components/RockPaperScissors";
 
+// Admin
+import AdminLayout from "./Admin/AdminLayout";
+import Dashboard from "./Admin/Dashboard";
+import UsersTable from "./Admin/UsersTable";
+import Leaderboard from "./Admin/Leaderboard";
+import GamesManager from "./Admin/GamesManager";
+import TriviaManager from "./Admin/TriviaManager";
+import ReferralsPage from "./Admin/ReferralsPage";
+import PaymentsPage from "./Admin/PaymentsPage";
+
 const App = () => {
   return (
     <>
       <ScrollToTop />
       <Routes>
-        {/* the / route is the landing page */}
-        {/* the reason i have this index page is because there are some component that will be consistent accross other pages
-        like the header, footer, etc, so i have the index page so i can use to hold other component that are consistent
-        in my landing page, so any other pages that are not going to have the header and footer, the route has to be outside of this / routes
-         */}
-          <Route path="/game" element={<GamePage />} />
-          <Route path="/die-roller" element={<DieRoller />} />
-          <Route path="/spin-bottle" element={<SpinTheBottle />} />
-          <Route path="/countdown" element={<CountdownPage />} />
-          <Route path="/coinflip" element={<Coinflip/>} />
-          <Route path="/tic-tac-toe" element={<TicTacToe/>} />
+        {/* Game routes */}
+        <Route path="/game" element={<GamePage />} />
+        <Route path="/die-roller" element={<DieRoller />} />
+        <Route path="/spin-bottle" element={<SpinTheBottle />} />
+        <Route path="/countdown" element={<CountdownPage />} />
+        <Route path="/coinflip" element={<Coinflip />} />
+        <Route path="/tic-tac-toe" element={<TicTacToe />} />
         <Route path="/rps" element={<RockPaperScissors />} />
+
+        {/* Admin routes — no header/footer */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="users" element={<UsersTable />} />
+          <Route path="leaderboard" element={<Leaderboard />} />
+          <Route path="games" element={<GamesManager />} />
+          <Route path="trivia" element={<TriviaManager />} />
+          <Route path="referrals" element={<ReferralsPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
+        </Route>
+
+        {/* Main site routes — with header/footer */}
         <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
           <Route path="/contact" element={<Contact />} />
@@ -40,9 +59,10 @@ const App = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/services" element={<ServicePage />} />
         </Route>
+
+        {/* Auth routes */}
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/login" element={<Login />} />
-        {/* other pages routes that won't have the header and footer will be defined here */}
       </Routes>
     </>
   );
