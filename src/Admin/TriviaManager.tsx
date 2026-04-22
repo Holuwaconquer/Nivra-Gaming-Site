@@ -136,8 +136,9 @@ const TriviaManager = () => {
 
       {/* Add Question Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#130020] border border-purple-900/40 rounded-xl w-full max-w-lg p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-3 sm:p-4">
+          {/* p-4 on mobile, p-6 on sm+. overflow-x-hidden kills horizontal scroll */}
+          <div className="bg-[#130020] border border-purple-900/40 rounded-xl w-full max-w-lg p-4 sm:p-6 space-y-5 max-h-[90vh] overflow-y-auto overflow-x-hidden">
             <div className="flex items-center justify-between">
               <h2 className="text-white font-semibold">New Trivia Question</h2>
               <button onClick={() => setShowForm(false)} className="text-purple-400 hover:text-white transition-colors">
@@ -163,10 +164,13 @@ const TriviaManager = () => {
 
             {/* Options */}
             <div>
-              <label className="text-purple-300 text-xs font-medium uppercase tracking-wider block mb-3">Options — tap to mark correct answer</label>
+              <label className="text-purple-300 text-xs font-medium uppercase tracking-wider block mb-3">
+                Options — tap circle to mark correct answer
+              </label>
               <div className="space-y-2">
                 {form.options.map((opt) => (
-                  <div key={opt.id} className="flex items-center gap-3">
+                  // min-w-0 prevents the flex row from overflowing its parent
+                  <div key={opt.id} className="flex items-center gap-2 min-w-0">
                     <button
                       onClick={() => setForm((f) => ({ ...f, correctOptionId: opt.id }))}
                       className="flex-shrink-0 transition-colors"
@@ -179,12 +183,13 @@ const TriviaManager = () => {
                     <div className="w-6 h-6 rounded-md bg-purple-900/40 flex items-center justify-center text-purple-300 text-xs font-bold uppercase flex-shrink-0">
                       {opt.id}
                     </div>
+                    {/* min-w-0 on the input so it shrinks instead of pushing the row wider */}
                     <input
                       type="text"
                       placeholder={`Option ${opt.id.toUpperCase()}`}
                       value={opt.text}
                       onChange={(e) => updateOption(opt.id, e.target.value)}
-                      className={`flex-1 bg-[#0d0015] border rounded-lg px-3 py-2 text-white text-sm placeholder:text-purple-700 focus:outline-none transition-colors ${
+                      className={`flex-1 min-w-0 bg-[#0d0015] border rounded-lg px-3 py-2 text-white text-sm placeholder:text-purple-700 focus:outline-none transition-colors ${
                         form.correctOptionId === opt.id
                           ? "border-fuchsia-500/40 focus:border-fuchsia-500/60"
                           : "border-purple-900/40 focus:border-purple-700/50"
@@ -228,17 +233,18 @@ const TriviaManager = () => {
         <div className="space-y-3">
           {filtered.map((q, idx) => (
             <div key={q.id} className="bg-[#130020] border border-purple-900/40 rounded-xl overflow-hidden">
-              <div className="px-5 py-4 flex items-start gap-4">
+              <div className="px-4 sm:px-5 py-4 flex items-start gap-3 sm:gap-4">
                 <span className="w-7 h-7 rounded-full bg-fuchsia-600/20 border border-fuchsia-600/30 flex items-center justify-center text-fuchsia-400 text-xs font-bold flex-shrink-0 mt-0.5">
                   {idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-medium text-sm leading-relaxed">{q.question}</p>
-                  <div className="grid grid-cols-2 gap-2 mt-3">
+                  {/* grid-cols-1 on mobile, grid-cols-2 on sm+ so options don't get squished */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
                     {q.options.map((opt) => (
                       <div
                         key={opt.id}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs ${
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs min-w-0 ${
                           opt.id === q.correctOptionId
                             ? "bg-fuchsia-600/15 border-fuchsia-600/30 text-fuchsia-300"
                             : "bg-purple-900/20 border-purple-900/30 text-purple-300"
@@ -248,8 +254,9 @@ const TriviaManager = () => {
                           ? <CheckCircle2 size={12} className="text-fuchsia-400 flex-shrink-0" />
                           : <Circle size={12} className="text-purple-600 flex-shrink-0" />
                         }
-                        <span className="font-semibold uppercase mr-0.5">{opt.id}.</span>
-                        {opt.text}
+                        <span className="font-semibold uppercase mr-0.5 flex-shrink-0">{opt.id}.</span>
+                        {/* truncate so long option text doesn't break layout */}
+                        <span className="truncate">{opt.text}</span>
                       </div>
                     ))}
                   </div>
