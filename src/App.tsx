@@ -15,6 +15,7 @@ import { SpinTheBottle } from "./components/SpinBottle";
 import Coinflip from "./components/Coinflip";
 import TicTacToe from "./components/TicTacToe";
 import RockPaperScissors from "./components/RockPaperScissors";
+import TriviaGame from "./components/TriviaGame";
 
 // Admin
 import AdminLayout from "./Admin/AdminLayout";
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/coinflip" element={<Coinflip />} />
         <Route path="/tic-tac-toe" element={<TicTacToe />} />
         <Route path="/rps" element={<RockPaperScissors />} />
+        <Route path="/trivia" element={<TriviaGame />} />
 
         {/* Admin routes — no header/footer */}
         <Route path="/admin" element={<AdminLayout />}>

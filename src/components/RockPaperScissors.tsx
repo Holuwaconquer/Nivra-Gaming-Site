@@ -5,8 +5,6 @@ import PaperImg from "../assets/paper.webp";
 import ScissorImg from "../assets/scissors.webp";
 import { useGameSession } from "../lib/GameSessionContext";
 
-// Removed local timer logic - now using session context
-
 type Choice = "rock" | "paper" | "scissors" | null;
 type GamePhase = "idle" | "countdown" | "reveal" | "result";
 type GameResult = "win" | "lose" | "draw" | null;
@@ -69,57 +67,24 @@ const RESULT_CONFIG = {
 
 export const RockPaperScissors: React.FC = () => {
   const { state, addPoints } = useGameSession();
+
   const [phase, setPhase] = useState<GamePhase>("idle");
   const [playerChoice, setPlayerChoice] = useState<Choice>(null);
   const [opponentChoice, setOpponentChoice] = useState<Choice>(null);
   const [countdown, setCountdown] = useState(3);
   const [result, setResult] = useState<GameResult>(null);
-  const [scores, setScores] = useState<ScoreBoard>({ wins: 0, losses: 0, draws: 0 });
+  const [scores, setScores] = useState<ScoreBoard>({
+    wins: 0,
+    losses: 0,
+    draws: 0,
+  });
 
-  const clearScores = () => {
+  // ── ALL hooks must come before any conditional return ──────────────────────
+
+  const clearScores = useCallback(() => {
     setScores({ wins: 0, losses: 0, draws: 0 });
-  };
+  }, []);
 
-  if (!state.sessionActive) {
-    return (
-      <div className="min-h-screen w-full bg-[#2d005e] flex flex-col items-center justify-center relative overflow-hidden text-center px-6">
-        <h2 className="text-4xl font-black text-white mb-4 uppercase tracking-tighter">Session Ended</h2>
-        <p className="text-white/70 mb-6">Redirecting to countdown...</p>
-        
-        {/* Final Score Display */}
-        <div className="rounded-xl bg-[#0b011c]/60 border border-purple-900/35 p-6 mb-6">
-          <div className="flex items-center justify-center gap-2 mb-4 text-purple-400">
-            <Trophy size={16} />
-            <span className="text-sm tracking-[2.5px] uppercase font-bold">Your Final Score</span>
-          </div>
-          <div className="flex gap-4 justify-center">
-            <div className="text-center">
-              <div className="bebas text-4xl text-emerald-400 leading-none">{scores.wins}</div>
-              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">Wins</div>
-            </div>
-            <div className="text-center">
-              <div className="bebas text-4xl text-rose-400 leading-none">{scores.losses}</div>
-              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">Losses</div>
-            </div>
-            <div className="text-center">
-              <div className="bebas text-4xl text-yellow-400 leading-none">{scores.draws}</div>
-              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">Draws</div>
-            </div>
-          </div>
-          <div className="mt-4 pt-4 border-t border-purple-900/30">
-            <div className="text-purple-300 text-sm">Total Points: <span className="text-white font-bold">{state.points.rps}</span></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Format time from session context
-  const formattedTime = `${Math.floor(state.timeLeft / 60)
-    .toString()
-    .padStart(2, "0")}:${(state.timeLeft % 60).toString().padStart(2, "0")}`;
-
-  /* Pick */
   const handlePick = useCallback(
     (choice: Choice) => {
       if (phase !== "idle") return;
@@ -131,6 +96,14 @@ export const RockPaperScissors: React.FC = () => {
     },
     [phase],
   );
+
+  const reset = useCallback(() => {
+    setPhase("idle");
+    setPlayerChoice(null);
+    setOpponentChoice(null);
+    setResult(null);
+    setCountdown(3);
+  }, []);
 
   /* Countdown → reveal */
   useEffect(() => {
@@ -153,34 +126,22 @@ export const RockPaperScissors: React.FC = () => {
       setResult(r);
       setPhase("result");
 
-      // Update scoreboard
-      if (r === "win") {
-        setScores(prev => ({ ...prev, wins: prev.wins + 1 }));
-      } else if (r === "lose") {
-        setScores(prev => ({ ...prev, losses: prev.losses + 1 }));
-      } else if (r === "draw") {
-        setScores(prev => ({ ...prev, draws: prev.draws + 1 }));
-      }
+      if (r === "win") setScores((prev) => ({ ...prev, wins: prev.wins + 1 }));
+      else if (r === "lose")
+        setScores((prev) => ({ ...prev, losses: prev.losses + 1 }));
+      else if (r === "draw")
+        setScores((prev) => ({ ...prev, draws: prev.draws + 1 }));
 
-      // Award points based on result
-      let points = 0;
-      if (r === "win") points = 10;
-      else if (r === "lose") points = 5; // Participation points
-      else if (r === "draw") points = 7;
-
-      addPoints('rps', points);
+      const points = r === "win" ? 10 : r === "draw" ? 7 : 5;
+      addPoints("rps", points);
     }, 900);
     return () => clearTimeout(id);
   }, [phase, opponentChoice, playerChoice, addPoints]);
 
-  const reset = () => {
-    setPhase("idle");
-    setPlayerChoice(null);
-    setOpponentChoice(null);
-    setResult(null);
-    setCountdown(3);
-  };
-
+  // ── Derived values ──────────────────────────────────────────────────────────
+  const formattedTime = `${Math.floor(state.timeLeft / 60)
+    .toString()
+    .padStart(2, "0")}:${(state.timeLeft % 60).toString().padStart(2, "0")}`;
   const isRevealed = phase === "reveal" || phase === "result";
   const isBouncing = phase === "idle" || phase === "countdown";
   const resultInfo = result ? RESULT_CONFIG[result] : null;
@@ -191,6 +152,60 @@ export const RockPaperScissors: React.FC = () => {
     ? CHOICES.find((c) => c.id === opponentChoice)!.img
     : RockImg;
 
+  // ── Early return AFTER all hooks ────────────────────────────────────────────
+  if (!state.sessionActive) {
+    return (
+      <div className="min-h-screen w-full bg-[#2d005e] flex flex-col items-center justify-center relative overflow-hidden text-center px-6">
+        <h2 className="text-4xl font-black text-white mb-4 uppercase tracking-tighter">
+          Session Ended
+        </h2>
+        <p className="text-white/70 mb-6">Redirecting to countdown...</p>
+
+        <div className="rounded-xl bg-[#0b011c]/60 border border-purple-900/35 p-6 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4 text-purple-400">
+            <Trophy size={16} />
+            <span className="text-sm tracking-[2.5px] uppercase font-bold">
+              Your Final Score
+            </span>
+          </div>
+          <div className="flex gap-4 justify-center">
+            <div className="text-center">
+              <div className="bebas text-4xl text-emerald-400 leading-none">
+                {scores.wins}
+              </div>
+              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">
+                Wins
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="bebas text-4xl text-rose-400 leading-none">
+                {scores.losses}
+              </div>
+              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">
+                Losses
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="bebas text-4xl text-yellow-400 leading-none">
+                {scores.draws}
+              </div>
+              <div className="text-[8px] tracking-[2px] uppercase text-purple-800 mt-1 font-bold">
+                Draws
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-purple-900/30">
+            <div className="text-purple-300 text-sm">
+              Total Points:{" "}
+              <span className="text-white font-bold">{state.points.rps}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Main render ─────────────────────────────────────────────────────────────
   return (
     <>
       <style>{`
@@ -227,7 +242,6 @@ export const RockPaperScissors: React.FC = () => {
         .bebas            { font-family: 'Bebas Neue', sans-serif; }
       `}</style>
 
-      {/* Page */}
       <div
         className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden"
         style={{ background: "rgba(33,7,54,1)" }}
@@ -236,22 +250,29 @@ export const RockPaperScissors: React.FC = () => {
         <div className="fixed top-4 right-4 z-50 flex items-center gap-2 px-3 py-2 bg-[#2a0e45]/90 backdrop-blur-md border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.3)]">
           <Timer className="text-[#FF00B2]" size={16} />
           <div className="flex flex-col items-end">
-            <span className="text-[8px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-0.5">Time Left</span>
-            <span className="text-white font-mono font-bold text-sm leading-none">{formattedTime}</span>
+            <span className="text-[8px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-0.5">
+              Time Left
+            </span>
+            <span className="text-white font-mono font-bold text-sm leading-none">
+              {formattedTime}
+            </span>
           </div>
         </div>
 
         {/* Score Counter */}
         <div className="fixed top-4 left-4 z-50 flex items-center gap-2 px-3 py-2 bg-[#2a0e45]/90 backdrop-blur-md border border-[#FF00B2]/50 rounded-full shadow-[0_0_15px_rgba(255,0,178,0.3)]">
           <div className="flex flex-col items-start">
-            <span className="text-[8px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-0.5">Total Score</span>
-            <span className="text-white font-mono font-bold text-sm leading-none">{state.totalPoints}</span>
+            <span className="text-[8px] uppercase text-[#AD15B5] font-bold tracking-widest leading-none mb-0.5">
+              Total Score
+            </span>
+            <span className="text-white font-mono font-bold text-sm leading-none">
+              {state.totalPoints}
+            </span>
           </div>
         </div>
 
         {/* Card */}
         <div className="relative z-10 w-full max-w-sm mx-4 rounded-2xl bg-[#1c0740]/70 backdrop-blur-xl border border-purple-800/30 shadow-2xl p-7">
-          {/* Header */}
           <h1
             className="bebas text-[38px] tracking-[5px] text-center mb-1"
             style={{
@@ -302,7 +323,6 @@ export const RockPaperScissors: React.FC = () => {
               </div>
             </div>
 
-            {/* VS */}
             <span className="bebas text-2xl text-purple-900/70 tracking-widest flex-shrink-0 mb-9">
               VS
             </span>
