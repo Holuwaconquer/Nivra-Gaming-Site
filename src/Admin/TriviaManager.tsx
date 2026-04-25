@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { Plus, Trash2, CheckCircle2, Circle, HelpCircle, X, Save } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  CheckCircle2,
+  Circle,
+  HelpCircle,
+  X,
+  Save,
+} from "lucide-react";
+import { QUESTION_BANK } from "../trivia/triviaData";
+import type { TriviaQuestion } from "../trivia/triviaData";
 
 interface TriviaOption {
   id: string;
   text: string;
-}
-
-interface TriviaQuestion {
-  id: number;
-  gameId: number;
-  question: string;
-  options: TriviaOption[];
-  correctOptionId: string;
 }
 
 const games = [
@@ -20,35 +22,18 @@ const games = [
   { id: 3, name: "Knowledge Bowl" },
 ];
 
-const initialQuestions: TriviaQuestion[] = [
-  {
-    id: 1,
-    gameId: 1,
-    question: "What is the capital of Nigeria?",
-    options: [
-      { id: "a", text: "Lagos" },
-      { id: "b", text: "Abuja" },
-      { id: "c", text: "Kano" },
-      { id: "d", text: "Ibadan" },
-    ],
-    correctOptionId: "b",
-  },
-  {
-    id: 2,
-    gameId: 1,
-    question: "What does CPU stand for?",
-    options: [
-      { id: "a", text: "Central Processing Unit" },
-      { id: "b", text: "Core Program Utility" },
-      { id: "c", text: "Computer Process Unit" },
-      { id: "d", text: "Central Program Uploader" },
-    ],
-    correctOptionId: "a",
-  },
-];
+const difficulties = ["easy", "medium", "hard"] as const;
+type Difficulty = (typeof difficulties)[number];
+
+const difficultyBadge: Record<Difficulty, string> = {
+  easy: "bg-green-500/15 text-green-400 border-green-500/20",
+  medium: "bg-yellow-500/15 text-yellow-400 border-yellow-500/20",
+  hard: "bg-red-500/15 text-red-400 border-red-500/20",
+};
 
 const emptyForm = () => ({
   question: "",
+  difficulty: "easy" as Difficulty,
   options: [
     { id: "a", text: "" },
     { id: "b", text: "" },
@@ -60,12 +45,19 @@ const emptyForm = () => ({
 
 const TriviaManager = () => {
   const [selectedGameId, setSelectedGameId] = useState(1);
-  const [questions, setQuestions] = useState(initialQuestions);
+  const [questions, setQuestions] = useState<TriviaQuestion[]>(QUESTION_BANK);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm());
   const [formError, setFormError] = useState("");
+  const [difficultyFilter, setDifficultyFilter] = useState<Difficulty | "all">(
+    "all",
+  );
 
-  const filtered = questions.filter((q) => q.gameId === selectedGameId);
+  const filtered = questions
+    .filter((q) => q.gameId === selectedGameId)
+    .filter(
+      (q) => difficultyFilter === "all" || q.difficulty === difficultyFilter,
+    );
 
   const openForm = () => {
     setForm(emptyForm());
@@ -81,11 +73,24 @@ const TriviaManager = () => {
   };
 
   const handleSave = () => {
-    if (!form.question.trim()) { setFormError("Question is required."); return; }
-    if (form.options.some((o) => !o.text.trim())) { setFormError("All 4 options must be filled."); return; }
+    if (!form.question.trim()) {
+      setFormError("Question is required.");
+      return;
+    }
+    if (form.options.some((o) => !o.text.trim())) {
+      setFormError("All 4 options must be filled.");
+      return;
+    }
     setQuestions((prev) => [
       ...prev,
-      { id: Date.now(), gameId: selectedGameId, ...form },
+      {
+        id: Date.now(),
+        gameId: selectedGameId,
+        question: form.question,
+        options: form.options,
+        correctOptionId: form.correctOptionId,
+        difficulty: form.difficulty,
+      },
     ]);
     setShowForm(false);
   };
@@ -94,13 +99,27 @@ const TriviaManager = () => {
     setQuestions((prev) => prev.filter((q) => q.id !== id));
   };
 
+  const counts = {
+    easy: questions.filter(
+      (q) => q.gameId === selectedGameId && q.difficulty === "easy",
+    ).length,
+    medium: questions.filter(
+      (q) => q.gameId === selectedGameId && q.difficulty === "medium",
+    ).length,
+    hard: questions.filter(
+      (q) => q.gameId === selectedGameId && q.difficulty === "hard",
+    ).length,
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-white text-2xl font-bold">Trivia Manager</h1>
-          <p className="text-purple-400 text-sm mt-1">Add and manage trivia questions for your games.</p>
+          <p className="text-purple-400 text-sm mt-1">
+            Add and manage trivia questions for your games.
+          </p>
         </div>
         <button
           onClick={openForm}
@@ -134,30 +153,80 @@ const TriviaManager = () => {
         </div>
       </div>
 
+      {/* Difficulty filter + stats */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-purple-400 text-sm">Difficulty:</span>
+        {(["all", "easy", "medium", "hard"] as const).map((d) => (
+          <button
+            key={d}
+            onClick={() => setDifficultyFilter(d)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border capitalize transition-all ${
+              difficultyFilter === d
+                ? "bg-fuchsia-600/20 text-fuchsia-400 border-fuchsia-600/30"
+                : "bg-[#130020] text-purple-400 border-purple-900/30 hover:border-purple-600/30"
+            }`}
+          >
+            {d === "all"
+              ? `All (${questions.filter((q) => q.gameId === selectedGameId).length})`
+              : `${d} (${counts[d]})`}
+          </button>
+        ))}
+      </div>
+
       {/* Add Question Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-3 sm:p-4">
-          {/* p-4 on mobile, p-6 on sm+. overflow-x-hidden kills horizontal scroll */}
           <div className="bg-[#130020] border border-purple-900/40 rounded-xl w-full max-w-lg p-4 sm:p-6 space-y-5 max-h-[90vh] overflow-y-auto overflow-x-hidden">
             <div className="flex items-center justify-between">
               <h2 className="text-white font-semibold">New Trivia Question</h2>
-              <button onClick={() => setShowForm(false)} className="text-purple-400 hover:text-white transition-colors">
+              <button
+                onClick={() => setShowForm(false)}
+                className="text-purple-400 hover:text-white transition-colors"
+              >
                 <X size={18} />
               </button>
             </div>
 
             {formError && (
-              <p className="text-red-400 text-xs bg-red-900/20 border border-red-900/30 rounded-lg px-4 py-2">{formError}</p>
+              <p className="text-red-400 text-xs bg-red-900/20 border border-red-900/30 rounded-lg px-4 py-2">
+                {formError}
+              </p>
             )}
+
+            {/* Difficulty selector */}
+            <div>
+              <label className="text-purple-300 text-xs font-medium uppercase tracking-wider block mb-2">
+                Difficulty
+              </label>
+              <div className="flex gap-2">
+                {difficulties.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setForm((f) => ({ ...f, difficulty: d }))}
+                    className={`flex-1 py-2 rounded-lg text-xs font-semibold capitalize border transition-all ${
+                      form.difficulty === d
+                        ? difficultyBadge[d]
+                        : "bg-[#0d0015] border-purple-900/30 text-purple-500 hover:border-purple-700/40"
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Question */}
             <div>
-              <label className="text-purple-300 text-xs font-medium uppercase tracking-wider block mb-2">Question</label>
+              <label className="text-purple-300 text-xs font-medium uppercase tracking-wider block mb-2">
+                Question
+              </label>
               <textarea
                 rows={3}
                 placeholder="Type your question here..."
                 value={form.question}
-                onChange={(e) => setForm((f) => ({ ...f, question: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, question: e.target.value }))
+                }
                 className="w-full bg-[#0d0015] border border-purple-900/40 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-purple-700 focus:outline-none focus:border-fuchsia-500/50 transition-colors resize-none"
               />
             </div>
@@ -169,21 +238,22 @@ const TriviaManager = () => {
               </label>
               <div className="space-y-2">
                 {form.options.map((opt) => (
-                  // min-w-0 prevents the flex row from overflowing its parent
                   <div key={opt.id} className="flex items-center gap-2 min-w-0">
                     <button
-                      onClick={() => setForm((f) => ({ ...f, correctOptionId: opt.id }))}
+                      onClick={() =>
+                        setForm((f) => ({ ...f, correctOptionId: opt.id }))
+                      }
                       className="flex-shrink-0 transition-colors"
                     >
-                      {form.correctOptionId === opt.id
-                        ? <CheckCircle2 size={18} className="text-fuchsia-400" />
-                        : <Circle size={18} className="text-purple-600" />
-                      }
+                      {form.correctOptionId === opt.id ? (
+                        <CheckCircle2 size={18} className="text-fuchsia-400" />
+                      ) : (
+                        <Circle size={18} className="text-purple-600" />
+                      )}
                     </button>
                     <div className="w-6 h-6 rounded-md bg-purple-900/40 flex items-center justify-center text-purple-300 text-xs font-bold uppercase flex-shrink-0">
                       {opt.id}
                     </div>
-                    {/* min-w-0 on the input so it shrinks instead of pushing the row wider */}
                     <input
                       type="text"
                       placeholder={`Option ${opt.id.toUpperCase()}`}
@@ -199,7 +269,10 @@ const TriviaManager = () => {
                 ))}
               </div>
               <p className="text-purple-500 text-xs mt-2">
-                Correct answer: <span className="text-fuchsia-400 font-semibold uppercase">Option {form.correctOptionId}</span>
+                Correct answer:{" "}
+                <span className="text-fuchsia-400 font-semibold uppercase">
+                  Option {form.correctOptionId}
+                </span>
               </p>
             </div>
 
@@ -227,19 +300,34 @@ const TriviaManager = () => {
         <div className="bg-[#130020] border border-purple-900/40 rounded-xl p-12 flex flex-col items-center justify-center text-center">
           <HelpCircle size={32} className="text-purple-700 mb-3" />
           <p className="text-purple-300 font-medium">No questions yet</p>
-          <p className="text-purple-500 text-sm mt-1">Add your first trivia question for this game.</p>
+          <p className="text-purple-500 text-sm mt-1">
+            Add your first trivia question for this game.
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
           {filtered.map((q, idx) => (
-            <div key={q.id} className="bg-[#130020] border border-purple-900/40 rounded-xl overflow-hidden">
+            <div
+              key={q.id}
+              className="bg-[#130020] border border-purple-900/40 rounded-xl overflow-hidden"
+            >
               <div className="px-4 sm:px-5 py-4 flex items-start gap-3 sm:gap-4">
                 <span className="w-7 h-7 rounded-full bg-fuchsia-600/20 border border-fuchsia-600/30 flex items-center justify-center text-fuchsia-400 text-xs font-bold flex-shrink-0 mt-0.5">
                   {idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-medium text-sm leading-relaxed">{q.question}</p>
-                  {/* grid-cols-1 on mobile, grid-cols-2 on sm+ so options don't get squished */}
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <p className="text-white font-medium text-sm leading-relaxed">
+                      {q.question}
+                    </p>
+                  </div>
+                  {q.difficulty && (
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold uppercase tracking-wider ${difficultyBadge[q.difficulty as Difficulty]}`}
+                    >
+                      {q.difficulty}
+                    </span>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
                     {q.options.map((opt) => (
                       <div
@@ -250,12 +338,20 @@ const TriviaManager = () => {
                             : "bg-purple-900/20 border-purple-900/30 text-purple-300"
                         }`}
                       >
-                        {opt.id === q.correctOptionId
-                          ? <CheckCircle2 size={12} className="text-fuchsia-400 flex-shrink-0" />
-                          : <Circle size={12} className="text-purple-600 flex-shrink-0" />
-                        }
-                        <span className="font-semibold uppercase mr-0.5 flex-shrink-0">{opt.id}.</span>
-                        {/* truncate so long option text doesn't break layout */}
+                        {opt.id === q.correctOptionId ? (
+                          <CheckCircle2
+                            size={12}
+                            className="text-fuchsia-400 flex-shrink-0"
+                          />
+                        ) : (
+                          <Circle
+                            size={12}
+                            className="text-purple-600 flex-shrink-0"
+                          />
+                        )}
+                        <span className="font-semibold uppercase mr-0.5 flex-shrink-0">
+                          {opt.id}.
+                        </span>
                         <span className="truncate">{opt.text}</span>
                       </div>
                     ))}
