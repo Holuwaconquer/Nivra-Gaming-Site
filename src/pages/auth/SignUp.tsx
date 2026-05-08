@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import nivraLogo from "@/assets/nivra-logo.png";
-import SuccessMessage from "@/components/SuccessMessage";
 
 interface SignUpFormData {
   username: string;
@@ -26,33 +25,16 @@ const SignUp: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const handleSubmit = (): void => {
     // TODO: Add backend API call here
     console.log("Sign up data:", formData);
-    setIsSuccess(true);
+    navigate("/auth/otp");
   };
 
   const handleChange = (field: keyof SignUpFormData, value: string): void => {
     setFormData({ ...formData, [field]: value });
   };
-
-  if (isSuccess) {
-    return (
-      <SuccessMessage
-        message={
-          <>
-            You have successfully logged into <br />
-            <span className="text-[#FF00B2] font-semibold">
-              Nivra Gaming Site
-            </span>
-          </>
-        }
-        onClose={() => navigate("/game")}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-2 md:p-4 ">
@@ -182,4 +164,5 @@ const SignUp: React.FC = () => {
     </div>
   );
 };
+
 export default SignUp;
