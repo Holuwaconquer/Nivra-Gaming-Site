@@ -4,6 +4,9 @@ import LandingPage from "./pages/LandingPage";
 import Contact from "./pages/Contact";
 import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
+import OtpVerification from "@/pages/auth/OtpVerification";
+
+// inside your routes
 import AboutUs from "./components/AboutUs";
 import ScrollToTop from "./components/ScrollTopTop";
 import Profile from "./pages/Profile";
@@ -41,7 +44,6 @@ const App = () => {
         <Route path="/tic-tac-toe" element={<TicTacToe />} />
         <Route path="/rps" element={<RockPaperScissors />} />
         <Route path="/trivia" element={<TriviaGame />} />
-
         {/* Admin routes — no header/footer */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
@@ -52,7 +54,6 @@ const App = () => {
           <Route path="referrals" element={<ReferralsPage />} />
           <Route path="payments" element={<PaymentsPage />} />
         </Route>
-
         {/* Main site routes — with header/footer */}
         <Route path="/" element={<MainPage />}>
           <Route index element={<LandingPage />} />
@@ -61,10 +62,10 @@ const App = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/services" element={<ServicePage />} />
         </Route>
-
         {/* Auth routes */}
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/otp" element={<OtpVerification />} />;
       </Routes>
     </>
   );
